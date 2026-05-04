@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - IPMC</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Professional Student Dashboard Styles */
+        .portal-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Login/Register Container */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .auth-header h2 {
+            margin-bottom: 10px;
+        }
+
+        .auth-body {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .auth-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-container {
+            background: #f5f7fa;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .welcome-area h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .welcome-area p {
+            opacity: 0.9;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            padding: 30px;
+            background: white;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card i {
+            font-size: 40px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .stat-card h3 {
+            font-size: 32px;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        /* Tabs */
+        .dashboard-tabs {
+            display: flex;
+            gap: 10px;
+            padding: 0 30px;
+            background: white;
+            border-bottom: 2px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 15px 25px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            background: white;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Results Table */
+        .results-table {
+            overflow-x: auto;
+        }
+
+        .results-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .results-table th, .results-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .results-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .grade-a { color: #2e7d32; font-weight: 600; }
+        .grade-b { color: #1976d2; font-weight: 600; }
+        .grade-c { color: #f57c00; font-weight: 600; }
+        .grade-d { color: #c62828; font-weight: 600; }
+        .grade-f { color: #c62828; font-weight: 600; }
+
+        /* GPA Display */
+        .gpa-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .gpa-card h4 {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .gpa-card .gpa-value {
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        /* Grievances */
+        .grievance-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: box-shadow 0.3s;
+        }
+
+        .grievance-item:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .grievance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* Update status badge styles */
+.status-badge {
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-pending {
+    background: #fff3e0;
+    color: #e67e22;
+}
+
+.status-replied {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-in_progress {
+    background: #fff8e1;
+    color: #f57c00;
+}
+
+.status-under_review {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-resolved {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+        .grievance-form-container {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        /* Profile */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+
+        .profile-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 40px;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-tabs {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="images/University College Logo.png" alt="IPMC Logo">
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="explore.html" class="nav-link">Explore Programmes</a></li>
+                    <li><a href="career.html" class="nav-link">Career Support</a></li>
+                    <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+                    <li><a href="about.html" class="nav-link">About Us</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact Us</a></li>
+                    <li><a href="grievance.html" class="nav-link active grievance-btn">Student Portal</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="portal-wrapper">
+        <!-- Login Section -->
+        <div id="loginSection" class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2>Student Portal Login</h2>
+                    <p>Access your dashboard with your Student ID</p>
+                </div>
+                <div class="auth-body">
+                    <div id="loginError" class="error-message" style="display: none;"></div>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label><i class="fas fa-id-card"></i> Student ID</label>
+                            <input type="text" id="studentId" placeholder="Enter your Student ID (e.g., IPMC2024001)" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-lock"></i> Password</label>
+                            <input type="password" id="password" placeholder="Enter your password" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Login to Dashboard</button>
+                    </form>
+                    <div class="auth-footer">
+                        Don't have an account? <a href="#" id="showRegisterBtn">Register Here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Section -->
+        <div id="registerSection" class="auth-container" style="display: none;">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2>Student Registration</h2>
+                    <p>Create your account to access the portal</p>
+                </div>
+                <div class="auth-body">
+                    <div id="registerError" class="error-message" style="display: none;"></div>
+                    <div id="registerSuccess" class="success-message" style="display: none;"></div>
+                    <form id="registerForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" id="regFirstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" id="regLastName" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="regEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="regPhone" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Program of Interest</label>
+                            <select id="regProgram" required>
+                                <option value="">Select Program</option>
+                                <option value="Systems Engineering with AI">Systems Engineering with AI</option>
+                                <option value="Graphic & Web Designing with AI">Graphic & Web Designing with AI</option>
+                                <option value="Web Development with AI">Web Development with AI</option>
+                                <option value="Software Engineering with AI">Software Engineering with AI</option>
+                                <option value="Digital Marketing with AI">Digital Marketing with AI</option>
+                                <option value="Database Technology with AI">Database Technology with AI</option>
+                                <option value="Python for Beginners">Python for Beginners</option>
+                                <option value="Big Data Analytics">Big Data Analytics</option>
+                                <option value="AWS Cloud Practitioner">AWS Cloud Practitioner</option>
+                                <option value="CompTIA N+">CompTIA N+</option>
+                                <option value="Machine Learning">Machine Learning</option>
+                                <option value="Microsoft Power BI">Microsoft Power BI</option>
+                                <option value="Robotics Development">Robotics Development</option>
+                                <option value="Social Media Marketing">Social Media Marketing</option>
+                                <option value="Introduction to Blockchain">Introduction to Blockchain</option>
+                                <option value="HTML 5 & CSS 3">HTML 5 & CSS 3</option>
+                                <option value="Microsoft Excel 2023">Microsoft Excel 2023</option>
+                                <option value="University Program">University Program</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" id="regPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm Password</label>
+                                <input type="password" id="regConfirmPassword" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary">Register Now</button>
+                    </form>
+                    <div class="auth-footer">
+                        Already have an account? <a href="#" id="showLoginBtn">Login Here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Dashboard -->
+        <div id="dashboardSection" style="display: none;">
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <div class="welcome-area">
+                        <h2>Welcome back, <span id="studentName">Student</span></h2>
+                        <p>Student ID: <span id="displayStudentId">IPMC2024001</span></p>
+                    </div>
+                    <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+
+                <!-- Stats Overview -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3 id="gpaValue">0.00</h3>
+                        <p>Current GPA</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-book"></i>
+                        <h3 id="coursesCount">0</h3>
+                        <p>Courses Completed</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-comments"></i>
+                        <h3 id="grievancesCount">0</h3>
+                        <p>Grievances</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-trophy"></i>
+                        <h3 id="creditsEarned">0</h3>
+                        <p>Credits Earned</p>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="dashboard-tabs">
+                    <button class="tab-btn active" data-tab="results"><i class="fas fa-chart-simple"></i> Academic Results</button>
+                    <button class="tab-btn" data-tab="grievances"><i class="fas fa-exclamation-triangle"></i> Grievances</button>
+                    <button class="tab-btn" data-tab="profile"><i class="fas fa-user"></i> Profile</button>
+                </div>
+
+                <!-- Results Tab -->
+                <div class="tab-content active" id="results">
+                    <div class="gpa-card">
+                        <h4>Overall Academic Performance</h4>
+                        <div class="gpa-value" id="overallGPA">0.00</div>
+                        <p>CGPA - Excellent Standing</p>
+                    </div>
+                    <div class="results-table">
+                        <table id="resultsTable">
+                            <thead>
+                                <tr>
+                                    <th>Course Code</th>
+                                    <th>Course Name</th>
+                                    <th>Semester</th>
+                                    <th>Academic Year</th>
+                                    <th>Grade</th>
+                                    <th>Credits</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsBody">
+                                <tr>
+                                    <td colspan="7" style="text-align: center;">Loading results...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Grievances Tab -->
+                <div class="tab-content" id="grievances">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+                        <h3><i class="fas fa-list"></i> My Grievances</h3>
+                        <button id="newGrievanceBtn" class="btn-primary" style="width: auto; padding: 10px 25px;">+ Submit New Grievance</button>
+                    </div>
+                    
+                    <div id="grievancesList">
+                        <p style="text-align: center; color: #666;">Loading grievances...</p>
+                    </div>
+
+                    <!-- New Grievance Form -->
+                    <div id="newGrievanceForm" class="grievance-form-container" style="display: none;">
+                        <h4 style="margin-bottom: 20px;">Submit New Grievance</h4>
+                        <form id="grievanceSubmitForm">
+                            <div class="form-group">
+                                <label>Category *</label>
+                                <select id="grievanceCategory" required>
+                                    <option value="">Select Category</option>
+                                    <option value="academic">Academic</option>
+                                    <option value="examination">Examination</option>
+                                    <option value="administrative">Administrative</option>
+                                    <option value="facilities">Facilities</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Title *</label>
+                                <input type="text" id="grievanceTitle" placeholder="Enter a clear title" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Description *</label>
+                                <textarea id="grievanceDescription" rows="5" placeholder="Provide detailed information about your grievance" required></textarea>
+                            </div>
+                            <div style="display: flex; gap: 15px;">
+                                <button type="submit" class="btn-primary" style="width: auto;">Submit Grievance</button>
+                                <button type="button" id="cancelGrievanceBtn" class="btn-primary" style="width: auto; background: #999;">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Profile Tab -->
+                <div class="tab-content" id="profile">
+                    <div class="profile-grid">
+                        <div class="profile-card">
+                            <div class="profile-avatar">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <h3 id="profileFullName">Student Name</h3>
+                            <p style="color: #666;" id="profileStudentIdDisplay">IPMC2024001</p>
+                            <p style="margin-top: 15px;">Status: <span style="color: #2e7d32; font-weight: 600;">Active</span></p>
+                        </div>
+                        <div class="profile-card">
+                            <h4 style="margin-bottom: 20px;">Personal Information</h4>
+                            <div style="text-align: left;">
+                                <p><strong><i class="fas fa-envelope"></i> Email:</strong> <span id="profileEmail">-</span></p>
+                                <p><strong><i class="fas fa-phone"></i> Phone:</strong> <span id="profilePhone">-</span></p>
+                                <p><strong><i class="fas fa-graduation-cap"></i> Program:</strong> <span id="profileProgram">-</span></p>
+                                <p><strong><i class="fas fa-calendar-alt"></i> Registered:</strong> <span id="profileRegistered">-</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>IPMC</h3>
+                    <p>Leading technology education in Ghana since 1992. Empowering the next generation of IT professionals.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="explore.html">Programs</a></li>
+                        <li><a href="career.html">Career Support</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Programs</h4>
+                    <ul>
+                        <li><a href="explore.html#career-dome">Career Dome</a></li>
+                        <li><a href="explore.html#university">University Programs</a></li>
+                        <li><a href="explore.html#certification">Certifications</a></li>
+                        <li><a href="explore.html#short-courses">Short Courses</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-phone"></i> +233 XXX XXX XXX</p>
+                        <p><i class="fas fa-envelope"></i> info@ipmc.edu.gh</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Kwame Nkrumah Avenue, Accra</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 IPMC. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+   
+<!-- This is the updated version of grievance.html with backend integration -->
+<!-- The file remains largely the same as your existing file, but with the following script updates -->
+
+<!-- Replace the script section at the bottom of grievance.html with this: -->
+
+<script src="frontend-config.js"></script>
+<script>
+    // API Base URL
+    const apiUrl = window.IPMC_CONFIG.apiUrl;
+    
+    // Check session on load
+    document.addEventListener('DOMContentLoaded', function() {
+        checkSession();
+    });
+    
+    function checkSession() {
+        fetch(apiUrl('check_session.php'), { credentials: 'include' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.logged_in && data.student_id) {
+                    loadStudentDashboard(data.student_id);
+                }
+            })
+            .catch(error => console.log('Session check error:', error));
+    }
+    
+    // Login Handler
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const studentId = document.getElementById('studentId').value;
+        const password = document.getElementById('password').value;
+        
+        fetch(apiUrl('student_login_api.php'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ student_id: studentId, password: password })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadStudentDashboard(studentId);
+            } else {
+                const errorDiv = document.getElementById('loginError');
+                errorDiv.textContent = data.message || 'Invalid Student ID or Password';
+                errorDiv.style.display = 'block';
+                setTimeout(() => errorDiv.style.display = 'none', 3000);
+            }
+        })
+        .catch(error => {
+            console.error('Login error:', error);
+            alert('Login failed. Please try again.');
+        });
+    });
+    
+    // Registration Handler
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const password = document.getElementById('regPassword').value;
+        const confirmPassword = document.getElementById('regConfirmPassword').value;
+        
+        if (password !== confirmPassword) {
+            const errorDiv = document.getElementById('registerError');
+            errorDiv.textContent = 'Passwords do not match';
+            errorDiv.style.display = 'block';
+            setTimeout(() => errorDiv.style.display = 'none', 3000);
+            return;
+        }
+        
+        const formData = {
+            first_name: document.getElementById('regFirstName').value,
+            last_name: document.getElementById('regLastName').value,
+            email: document.getElementById('regEmail').value,
+            phone: document.getElementById('regPhone').value,
+            program: document.getElementById('regProgram').value,
+            password: password
+        };
+        
+        fetch(apiUrl('student_register_api.php'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const successDiv = document.getElementById('registerSuccess');
+                successDiv.innerHTML = data.message + '<br>Your Student ID: <strong>' + data.data.student_id + '</strong><br>Please save this ID to login.';
+                successDiv.style.display = 'block';
+                document.getElementById('registerForm').reset();
+                setTimeout(() => {
+                    document.getElementById('showLoginBtn').click();
+                }, 5000);
+            } else {
+                const errorDiv = document.getElementById('registerError');
+                errorDiv.textContent = data.message;
+                errorDiv.style.display = 'block';
+                setTimeout(() => errorDiv.style.display = 'none', 3000);
+            }
+        })
+        .catch(error => {
+            console.error('Registration error:', error);
+            alert('Registration failed. Please try again.');
+        });
+    });
+    
+    // Load Student Dashboard
+    function loadStudentDashboard(studentId) {
+        console.log('Loading dashboard for:', studentId);
+        
+        fetch(apiUrl('get_student_data.php'), { credentials: 'include' })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Student data:', data);
+                
+                if (data.success && data.student) {
+                    // Show dashboard
+                    document.getElementById('loginSection').style.display = 'none';
+                    document.getElementById('registerSection').style.display = 'none';
+                    document.getElementById('dashboardSection').style.display = 'block';
+                    
+                    // Update header
+                    document.getElementById('studentName').textContent = data.student.first_name + ' ' + data.student.last_name;
+                    document.getElementById('displayStudentId').textContent = data.student.student_id;
+                    
+                    // Update profile tab
+                    document.getElementById('profileFullName').textContent = data.student.first_name + ' ' + data.student.last_name;
+                    document.getElementById('profileStudentIdDisplay').textContent = data.student.student_id;
+                    document.getElementById('profileEmail').textContent = data.student.email || 'Not provided';
+                    document.getElementById('profilePhone').textContent = data.student.phone || 'Not provided';
+                    document.getElementById('profileProgram').textContent = data.student.program || 'Not selected';
+                    document.getElementById('profileRegistered').textContent = data.student.created_at ? new Date(data.student.created_at).toLocaleDateString() : 'Recent';
+                    
+                    // Load results
+                    loadResults(studentId);
+                    
+                    // Load grievances
+                    loadGrievances(studentId);
+                } else {
+                    console.error('Failed to load student data:', data);
+                    alert('Failed to load your information. Please login again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading dashboard:', error);
+                alert('Error loading dashboard. Please refresh and try again.');
+            });
+    }
+    
+    // Load Results
+    function loadResults(studentId) {
+        console.log('Loading results for:', studentId);
+        
+        const tbody = document.getElementById('resultsBody');
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Loading results...</td></tr>';
+        
+        fetch(apiUrl('get_student_results.php'), { credentials: 'include' })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Results data:', data);
+                
+                if (data.success && data.results && data.results.length > 0) {
+                    let totalPoints = 0;
+                    let totalCredits = 0;
+                    const gradePoints = {'A': 4.0, 'A-': 3.7, 'B+': 3.3, 'B': 3.0, 'B-': 2.7, 'C+': 2.3, 'C': 2.0, 'D': 1.0, 'F': 0.0};
+                    
+                    tbody.innerHTML = '';
+                    data.results.forEach(result => {
+                        const gradeClass = 'grade-' + (result.grade ? result.grade.charAt(0).toLowerCase() : 'f');
+                        const row = tbody.insertRow();
+                        row.innerHTML = `
+                            <td>${escapeHtml(result.course_code || 'N/A')}</td>
+                            <td>${escapeHtml(result.course_name || 'N/A')}</td>
+                            <td>${escapeHtml(result.semester || 'N/A')}</td>
+                            <td>${escapeHtml(result.academic_year || 'N/A')}</td>
+                            <td class="${gradeClass}">${result.grade || 'N/A'}</td>
+                            <td>${result.credits || 0}</td>
+                            <td>${result.score ? result.score + '%' : '-'}</td>
+                        `;
+                        
+                        if (result.grade && gradePoints[result.grade]) {
+                            totalPoints += gradePoints[result.grade] * (result.credits || 0);
+                            totalCredits += result.credits || 0;
+                        }
+                    });
+                    
+                    const gpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : 0;
+                    document.getElementById('gpaValue').textContent = gpa;
+                    document.getElementById('overallGPA').textContent = gpa;
+                    document.getElementById('coursesCount').textContent = data.results.length;
+                    document.getElementById('creditsEarned').textContent = totalCredits;
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No results available yet. Check back after results are uploaded.</td></tr>';
+                    document.getElementById('gpaValue').textContent = '0.00';
+                    document.getElementById('overallGPA').textContent = '0.00';
+                    document.getElementById('coursesCount').textContent = '0';
+                    document.getElementById('creditsEarned').textContent = '0';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading results:', error);
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: red;">Error loading results. Please try again.</td></tr>';
+            });
+    }
+    
+   // Load Grievances - UPDATED with Professional Status Labels
+function loadGrievances(studentId) {
+    console.log('Loading grievances for:', studentId);
+    
+    const container = document.getElementById('grievancesList');
+    container.innerHTML = '<p style="text-align: center;">Loading grievances...</p>';
+    
+    fetch(apiUrl('get_student_grievances.php'), { credentials: 'include' })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Grievances data:', data);
+            
+            if (data.success && data.grievances && data.grievances.length > 0) {
+                document.getElementById('grievancesCount').textContent = data.grievances.length;
+                container.innerHTML = '';
+                data.grievances.forEach(g => {
+                    // Get professional status label
+                    const statusLabel = getProfessionalStatus(g.status);
+                    const statusClass = getStatusClass(g.status);
+                    
+                    container.innerHTML += `
+                        <div class="grievance-item">
+                            <div class="grievance-header">
+                                <h4>${escapeHtml(g.title)}</h4>
+                                <span class="status-badge ${statusClass}">${statusLabel}</span>
+                            </div>
+                            <p><strong>Category:</strong> ${capitalize(g.category)}</p>
+                            <p><strong>Submitted:</strong> ${new Date(g.created_at).toLocaleDateString()}</p>
+                            <p>${escapeHtml(g.description)}</p>
+                            ${g.admin_response ? `<div style="margin-top: 15px; padding: 15px; background: #e8f5e9; border-radius: 8px; border-left: 4px solid #2e7d32;">
+                                <strong><i class="fas fa-reply"></i> Admin Response:</strong>
+                                <p style="margin-top: 8px;">${escapeHtml(g.admin_response)}</p>
+                            </div>` : ''}
+                        </div>
+                    `;
+                });
+            } else {
+                container.innerHTML = '<p style="text-align: center; color: #666;">No grievances submitted yet.</p>';
+                document.getElementById('grievancesCount').textContent = '0';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading grievances:', error);
+            container.innerHTML = '<p style="text-align: center; color: red;">Error loading grievances. Please try again.</p>';
+        });
+}
+
+// Function to get professional status label
+function getProfessionalStatus(status) {
+    const statusMap = {
+        'pending': '📋 Pending',
+        'replied': '💬 Replied',
+        'in_progress': '⚙️ In Progress',
+        'under_review': '🔍 Under Review',
+        'resolved': '✅ Resolved'
+    };
+    return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1);
+}
+
+// Function to get status CSS class
+function getStatusClass(status) {
+    const classMap = {
+        'pending': 'status-pending',
+        'replied': 'status-replied',
+        'in_progress': 'status-in_progress',
+        'under_review': 'status-under_review',
+        'resolved': 'status-resolved'
+    };
+    return classMap[status] || 'status-pending';
+}
+    
+    // Submit Grievance
+    document.getElementById('grievanceSubmitForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const studentId = document.getElementById('displayStudentId').textContent;
+        const category = document.getElementById('grievanceCategory').value;
+        const title = document.getElementById('grievanceTitle').value;
+        const description = document.getElementById('grievanceDescription').value;
+        
+        if (!category || !title || !description) {
+            alert('Please fill in all fields');
+            return;
+        }
+        
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.disabled = true;
+        
+        fetch(apiUrl('submit_grievance_api.php'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                category: category,
+                title: title,
+                description: description
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Grievance submitted successfully!');
+                document.getElementById('newGrievanceForm').style.display = 'none';
+                document.getElementById('newGrievanceBtn').style.display = 'inline-block';
+                document.getElementById('grievanceSubmitForm').reset();
+                loadGrievances(studentId);
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Submit error:', error);
+            alert('Error submitting grievance. Please try again.');
+        })
+        .finally(() => {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        });
+    });
+    
+    // Logout
+    document.getElementById('logoutBtn')?.addEventListener('click', function() {
+        fetch(apiUrl('logout_api.php'), { credentials: 'include' })
+            .then(() => {
+                location.reload();
+            })
+            .catch(() => {
+                location.reload();
+            });
+    });
+    
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.dataset.tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+    
+    // Show/Hide forms
+    document.getElementById('showRegisterBtn')?.addEventListener('click', () => {
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('registerSection').style.display = 'flex';
+    });
+    
+    document.getElementById('showLoginBtn')?.addEventListener('click', () => {
+        document.getElementById('registerSection').style.display = 'none';
+        document.getElementById('loginSection').style.display = 'flex';
+    });
+    
+    document.getElementById('newGrievanceBtn')?.addEventListener('click', () => {
+        document.getElementById('newGrievanceForm').style.display = 'block';
+        document.getElementById('newGrievanceBtn').style.display = 'none';
+    });
+    
+    document.getElementById('cancelGrievanceBtn')?.addEventListener('click', () => {
+        document.getElementById('newGrievanceForm').style.display = 'none';
+        document.getElementById('newGrievanceBtn').style.display = 'inline-block';
+        document.getElementById('grievanceSubmitForm').reset();
+    });
+    
+    // Helper functions
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    function capitalize(str) {
+        if (!str) return '';
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+    
+    function formatStatus(status) {
+        if (!status) return 'Pending';
+        return status.split('_').map(word => capitalize(word)).join(' ');
+    }
+</script>
+</body>
+</html>

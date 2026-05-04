@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPMC - Gallery</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="images/University College Logo.png" alt="IPMC Logo">
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="explore.html" class="nav-link">Explore Programmes</a></li>
+                    <li><a href="career.html" class="nav-link">Career Support</a></li>
+                    <li><a href="gallery.html" class="nav-link active">Gallery</a></li>
+                    <li><a href="about.html" class="nav-link">About Us</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact Us</a></li>
+                    <li><a href="grievance.html" class="nav-link grievance-btn">Grievance Portal</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Banner -->
+    <section class="banner">
+        <img src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1600&h=600&fit=crop" alt="Gallery">
+        <div class="banner-content">
+            <h1>IPMC Gallery</h1>
+            <p>Explore our campus, facilities, events, and student life</p>
+            <a href="contact.html" class="btn-primary">Register Now</a>
+        </div>
+    </section>
+
+    <!-- Content -->
+    <section class="content">
+        <div class="container">
+            <div class="text-center mb-20">
+                <h2>Campus Life & Facilities</h2>
+                <p>Take a visual journey through IPMC's state-of-the-art facilities, vibrant campus life, and memorable moments that define our educational experience.</p>
+            </div>
+
+            <!-- Gallery Categories -->
+            <div class="gallery-categories" style="text-align: center; margin-bottom: 50px;">
+                <button class="btn-secondary category-btn active" data-category="all" style="margin: 5px;">All</button>
+                <button class="btn-secondary category-btn" data-category="campus" style="margin: 5px;">Campus</button>
+                <button class="btn-secondary category-btn" data-category="labs" style="margin: 5px;">Laboratories</button>
+                <button class="btn-secondary category-btn" data-category="events" style="margin: 5px;">Events</button>
+                <button class="btn-secondary category-btn" data-category="graduation" style="margin: 5px;">Graduation</button>
+                <button class="btn-secondary category-btn" data-category="facilities" style="margin: 5px;">Facilities</button>
+            </div>
+
+            <!-- Gallery Grid -->
+            <div class="gallery-grid">
+                <!-- Campus Images -->
+                <div class="gallery-item" data-category="campus">
+                    <img src="https://images.pexels.com/photos/3184287/pexels-photo-3184287.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="IPMC Main Campus Building">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="campus">
+                    <img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Campus Courtyard">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="campus">
+                    <img src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Student Recreation Area">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <!-- Laboratory Images -->
+                <div class="gallery-item" data-category="labs">
+                    <img src="https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Computer Laboratory">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="labs">
+                    <img src="https://images.pexels.com/photos/3184394/pexels-photo-3184394.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="AI & Machine Learning Lab">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="labs">
+                    <img src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Network Systems Lab">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="labs">
+                    <img src="https://images.pexels.com/photos/3184357/pexels-photo-3184357.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Software Development Lab">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <!-- Events Images -->
+                <div class="gallery-item" data-category="events">
+                    <img src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Tech Conference">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="events">
+                    <img src="https://images.pexels.com/photos/3861972/pexels-photo-3861972.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="AI Workshop">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="events">
+                    <img src="https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Design Competition">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="events">
+                    <img src="https://images.pexels.com/photos/270404/pexels-photo-270404.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Coding Bootcamp">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <!-- Graduation Images -->
+                <div class="gallery-item" data-category="graduation">
+                    <img src="https://images.pexels.com/photos/267507/pexels-photo-267507.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Graduation Ceremony">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="graduation">
+                    <img src="https://images.pexels.com/photos/590041/pexels-photo-590041.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Graduate Celebration">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="graduation">
+                    <img src="https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Award Ceremony">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <!-- Facilities Images -->
+                <div class="gallery-item" data-category="facilities">
+                    <img src="https://images.pexels.com/photos/1181677/pexels-photo-1181677.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Library">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="facilities">
+                    <img src="https://images.pexels.com/photos/574071/pexels-photo-574071.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Cafeteria">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="facilities">
+                    <img src="https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Study Areas">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="facilities">
+                    <img src="https://images.pexels.com/photos/2148217/pexels-photo-2148217.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Server Room">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="facilities">
+                    <img src="https://images.pexels.com/photos/590020/pexels-photo-590020.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Conference Room">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="facilities">
+                    <img src="https://images.pexels.com/photos/3862365/pexels-photo-3862365.jpeg?auto=compress&cs=tinysrgb&w=500&h=400&fit=crop" alt="Innovation Hub">
+                    <div class="gallery-overlay">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campus Tour Section -->
+            <div style="background: var(--light-color); padding: 60px 20px; border-radius: 15px; margin: 60px 0; text-align: center;">
+                <h3 style="margin-bottom: 20px;">Experience IPMC Firsthand</h3>
+                <p style="margin-bottom: 30px; color: var(--gray);">Schedule a campus tour to explore our facilities, meet our faculty, and experience the vibrant learning environment that makes IPMC special.</p>
+                <a href="contact.html" class="btn-primary">Schedule Campus Tour</a>
+            </div>
+
+            <!-- Student Testimonials -->
+            <div style="margin: 60px 0;">
+                <h3 style="text-align: center; margin-bottom: 40px;">What Our Students Say</h3>
+                
+                <div class="course-grid">
+                    <div class="course-card" style="border-left: 4px solid var(--primary-color);">
+                        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                            <img src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop" alt="Student" style="width: 60px; height: 60px; border-radius: 50%; margin-right: 15px;">
+                            <div>
+                                <h4 style="margin: 0;">Akosua Osei</h4>
+                                <p style="margin: 0; color: var(--gray); font-size: 0.9rem;">Level 5 Computing Student</p>
+                            </div>
+                        </div>
+                        <p>"The facilities at IPMC are world-class. The computer labs are equipped with the latest technology, and the learning environment is truly inspiring. I feel prepared for my future career in IT."</p>
+                    </div>
+                    
+                    <div class="course-card" style="border-left: 4px solid var(--secondary-color);">
+                        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                            <img src="https://images.pexels.com/photos/3184394/pexels-photo-3184394.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop" alt="Student" style="width: 60px; height: 60px; border-radius: 50%; margin-right: 15px;">
+                            <div>
+                                <h4 style="margin: 0;">Kofi Adjei</h4>
+                                <p style="margin: 0; color: var(--gray); font-size: 0.9rem;">AI & Machine Learning Student</p>
+                            </div>
+                        </div>
+                        <p>"The hands-on approach to learning at IPMC is incredible. From day one, we're working on real projects with industry-standard tools. The campus events and workshops keep us connected with the latest trends in technology."</p>
+                    </div>
+                    
+                    <div class="course-card" style="border-left: 4px solid var(--accent-color);">
+                        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                            <img src="https://images.pexels.com/photos/3184357/pexels-photo-3184357.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop" alt="Student" style="width: 60px; height: 60px; border-radius: 50%; margin-right: 15px;">
+                            <div>
+                                <h4 style="margin: 0;">Efua Mensah</h4>
+                                <p style="margin: 0; color: var(--gray); font-size: 0.9rem;">Web Development Student</p>
+                            </div>
+                        </div>
+                        <p>"IPMC doesn't just teach you technical skills - it builds character and confidence. The supportive community, modern facilities, and experienced faculty create the perfect environment for growth and learning."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>IPMC</h3>
+                    <p>Leading technology education in Ghana since 1992. Empowering the next generation of IT professionals.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="explore.html">Programs</a></li>
+                        <li><a href="career.html">Career Support</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Programs</h4>
+                    <ul>
+                        <li><a href="explore.html#career-dome">Career Dome</a></li>
+                        <li><a href="explore.html#university">University Programs</a></li>
+                        <li><a href="explore.html#certification">Certifications</a></li>
+                        <li><a href="explore.html#short-courses">Short Courses</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-phone"></i> +233 XXX XXX XXX</p>
+                        <p><i class="fas fa-envelope"></i> info@ipmc.edu.gh</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Kwame Nkrumah Avenue, Accra</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 IPMC. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Gallery filtering functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    
+                    // Update active button
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Filter gallery items
+                    galleryItems.forEach(item => {
+                        if (category === 'all' || item.dataset.category === category) {
+                            item.style.display = 'block';
+                            item.style.animation = 'fadeInUp 0.5s ease forwards';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

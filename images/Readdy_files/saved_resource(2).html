@@ -1,0 +1,2304 @@
+<!DOCTYPE html>
+<!-- saved from url=(0012)about:srcdoc -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script>
+(function(){
+  let proxyEcharts = null;
+
+  let originInit = null;
+
+  const DefaultFontOptions = [
+      { key: 'xAxis', stylePath: 'xAxis.axisLabel' },
+      { key: 'yAxis', stylePath: 'yAxis.axisLabel' },
+      { key: 'legend', stylePath: 'legend.textStyle' },
+      { key: 'tooltip', stylePath: 'tooltip.textStyle' },
+      { key: 'title', stylePath: 'title.textStyle' },
+      { key: 'series', stylePath: 'series.n.label', isArray: true },
+  ];
+
+  function setVal(source, keys, val, setFn) {
+      if (!Array.isArray(keys)) {
+          keys = keys.split('.');
+      }
+      keys = [...keys];
+      const valKey = keys.pop();
+      while (keys.length) {
+          const parentKey = keys.shift();
+          if (typeof source[parentKey] !== 'object' && typeof source[parentKey] !== 'function') {
+              const childKey = keys[0] === undefined ? valKey : keys[0];
+              let newVal = {};
+              if (!isNaN(childKey * 1)) {
+                  newVal = [];
+              }
+              if (setFn) {
+                  setFn(source, parentKey, newVal);
+              } else {
+                  source[parentKey] = newVal;
+              }
+          }
+          source = source[parentKey];
+      }
+      if (setFn) {
+          setFn(source, valKey, val);
+      } else {
+          source[valKey] = val;
+      }
+  }
+
+  function setFontFamily(options) {
+      return options;
+  }
+
+  function setSeriesFamily(options) {
+      if (options.series) {
+          options.series = options.series.map(item => {
+              item.label = { ...item.label };
+              return item;
+          });
+      }
+      return options;
+  }
+
+
+  function addResizeListener(echartsInstance) {
+      const mountDom = echartsInstance.getDom();
+      const resizeObserver = new ResizeObserver(() => {
+          echartsInstance.resize();
+      });
+      resizeObserver.observe(mountDom);
+      return resizeObserver;
+  }
+
+  function proxyInit(...arg) {
+      if (!originInit) return null;
+      let instance = null;
+      try {
+        instance = originInit.apply(this, arg);
+      } catch (e) {
+        console.error(e);
+        const div = document.createElement('div');
+        div.style.display = 'none';
+        document.body.appendChild(div);
+        instance = originInit.call(this, div);
+        document.body.removeChild(div);
+      }
+      const originSetOption = instance.setOption;
+      addResizeListener(instance);
+      instance.setOption = async function setOptionProxy(options) {
+          options = options || {};
+          options.animation = false;
+          try {
+            return originSetOption.call(this, options);
+          } catch (e) {
+            console.error(e);
+            return originSetOption.call(this, {});
+          }
+      };
+      return instance;
+  }
+
+  Object.defineProperty(globalThis, 'echarts', {
+      get() {
+          return proxyEcharts;
+      },
+      set(value) {
+          originInit = value.init;
+          defineInit(value);
+          proxyEcharts = value;
+      },
+      configurable: true,
+  });
+
+  function defineInit(value) {
+      Object.defineProperty(value, 'init', {
+          get() {
+              return proxyInit;
+          },
+          set(v) {
+              originInit = v;
+          },
+          enumerable: true,
+      });
+  }
+})()
+</script><script>console.warn = () => {};console.log = () => {};</script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amazon Clone - Online Shopping</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&amp;display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+.category-item:hover > div:first-child { background-color: #f3f4f6; }
+.category-item { position: relative; }
+.category-item .absolute { top: 0; display: none; }
+.category-item:hover .absolute { display: block; }
+.slider-container { position: relative; overflow: hidden; }
+.slider-track { display: flex; transition: transform 0.3s ease; }
+.slider-item { min-width: 100%; }
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+.modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: none; width: 400px; border-radius: 8px; }
+.star-rating { color: #ffa500; }
+.cart-count { background-color: #ff9900; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; }
+.nav-item:hover { background-color: rgba(255,255,255,0.1); }
+.product-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.btn-primary { background-color: #ff9900; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+.btn-primary:hover { background-color: #e88900; }
+.btn-secondary { background-color: #232f3e; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+.btn-secondary:hover { background-color: #1a252f; }
+.search-btn { background-color: #febd69; border: none; padding: 8px 12px; border-radius: 0 4px 4px 0; cursor: pointer; }
+.search-btn:hover { background-color: #f3a847; }
+.dropdown-content { display: none; position: absolute; background-color: white; min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; border-radius: 4px; }
+.dropdown:hover .dropdown-content { display: block; }
+.page-section { display: none; }
+.page-section.active { display: block; }
+.toast { position: fixed; top: 20px; right: 20px; background-color: #28a745; color: white; padding: 12px 20px; border-radius: 4px; z-index: 1001; display: none; }
+.account-sidebar { background-color: #f8f9fa; padding: 20px; border-radius: 8px; }
+.account-content { background-color: white; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; }
+.order-item { border-bottom: 1px solid #e0e0e0; padding: 15px 0; }
+.order-item:last-child { border-bottom: none; }
+</style>
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+primary: '#ff9900',
+secondary: '#232f3e'
+},
+borderRadius: {
+'none': '0px',
+'sm': '4px',
+DEFAULT: '8px',
+'md': '12px',
+'lg': '16px',
+'xl': '20px',
+'2xl': '24px',
+'3xl': '32px',
+'full': '9999px',
+'button': '8px'
+}
+}
+}
+}
+</script>
+<script>
+    // window.setInterval = () => {};
+    // window.clearInterval = () => {};
+    // window.setTimeout = () => {};
+    // window.clearTimeout = () => {};
+  </script><style>
+    /* 自定义滚动条样式 */
+    /* WebKit 浏览器 (Chrome, Safari, Edge) */
+    ::-webkit-scrollbar {
+        width: 0; /* 滚动条宽度 */
+        height: 0; /* 水平滚动条高度 */
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent; /* 轨道透明，使内容可见 */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.5); /* 滚动条滑块颜色 */
+        border-radius: 4px; /* 滑块圆角 */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(0, 0, 0, 0.7); /* 悬停时颜色 */
+    }
+  </style><script>
+  window.addEventListener('load', () => {
+    if (typeof AOS !== 'undefined' && AOS) {
+      AOS.refresh?.();
+    }
+  });
+</script><script>(function () {
+  // 内存存储
+  const memoryStorage = {
+    local: new Map(),
+    session: new Map()
+  };
+
+  // 保存原始方法
+  // const originalLocalStorage = {
+  //   setItem: localStorage.setItem.bind(localStorage),
+  //   getItem: localStorage.getItem.bind(localStorage),
+  //   removeItem: localStorage.removeItem.bind(localStorage),
+  //   clear: localStorage.clear.bind(localStorage),
+  //   key: localStorage.key.bind(localStorage)
+  // };
+
+  // const originalSessionStorage = {
+  //   setItem: sessionStorage.setItem.bind(sessionStorage),
+  //   getItem: sessionStorage.getItem.bind(sessionStorage),
+  //   removeItem: sessionStorage.removeItem.bind(sessionStorage),
+  //   clear: sessionStorage.clear.bind(sessionStorage),
+  //   key: sessionStorage.key.bind(sessionStorage)
+  // };
+
+  // 只重写方法，不动属性
+  localStorage.setItem = function (key, value) {
+    memoryStorage.local.set(key, value);
+  };
+
+  localStorage.getItem = function (key) {
+    return memoryStorage.local.get(key) ?? null;
+  };
+
+  localStorage.removeItem = function (key) {
+    memoryStorage.local.delete(key);
+  };
+
+  localStorage.clear = function () {
+    memoryStorage.local.clear();
+  };
+
+  localStorage.key = function (n) {
+    return Array.from(memoryStorage.local.keys())[n] ?? null;
+  };
+
+  // sessionStorage 同样的处理
+  sessionStorage.setItem = function (key, value) {
+    memoryStorage.session.set(key, value);
+  };
+
+  sessionStorage.getItem = function (key) {
+    return memoryStorage.session.get(key) ?? null;
+  };
+
+  sessionStorage.removeItem = function (key) {
+    memoryStorage.session.delete(key);
+  };
+
+  sessionStorage.clear = function () {
+    memoryStorage.session.clear();
+  };
+
+  sessionStorage.key = function (n) {
+    return Array.from(memoryStorage.session.keys())[n] ?? null;
+  };
+})();
+</script><style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0px}.-right-1{right:-0.25rem}.-top-1{top:-0.25rem}.left-0{left:0px}.left-4{left:1rem}.left-8{left:2rem}.left-full{left:100%}.right-4{right:1rem}.top-0{top:0px}.top-1\/2{top:50%}.top-full{top:100%}.z-50{z-index:50}.mx-4{margin-left:1rem;margin-right:1rem}.mx-auto{margin-left:auto;margin-right:auto}.my-4{margin-top:1rem;margin-bottom:1rem}.mb-1{margin-bottom:0.25rem}.mb-12{margin-bottom:3rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-1{margin-left:0.25rem}.ml-2{margin-left:0.5rem}.mr-2{margin-right:0.5rem}.mr-3{margin-right:0.75rem}.mt-1{margin-top:0.25rem}.mt-12{margin-top:3rem}.mt-16{margin-top:4rem}.mt-3{margin-top:0.75rem}.mt-4{margin-top:1rem}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-10{height:2.5rem}.h-12{height:3rem}.h-16{height:4rem}.h-24{height:6rem}.h-3{height:0.75rem}.h-32{height:8rem}.h-4{height:1rem}.h-40{height:10rem}.h-48{height:12rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-64{height:16rem}.h-8{height:2rem}.h-96{height:24rem}.h-fit{height:-moz-fit-content;height:fit-content}.h-full{height:100%}.w-10{width:2.5rem}.w-12{width:3rem}.w-16{width:4rem}.w-3{width:0.75rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-64{width:16rem}.w-8{width:2rem}.w-full{width:100%}.max-w-2xl{max-width:42rem}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-6 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1.5rem * var(--tw-space-x-reverse));margin-left:calc(1.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.whitespace-nowrap{white-space:nowrap}.\!rounded-button{border-radius:8px !important}.rounded{border-radius:8px}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:16px}.rounded-l{border-top-left-radius:8px;border-bottom-left-radius:8px}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-none{border-style:none}.border-blue-300{--tw-border-opacity:1;border-color:rgb(147 197 253 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-gray-600{--tw-border-opacity:1;border-color:rgb(75 85 99 / var(--tw-border-opacity, 1))}.border-green-300{--tw-border-opacity:1;border-color:rgb(134 239 172 / var(--tw-border-opacity, 1))}.border-pink-300{--tw-border-opacity:1;border-color:rgb(249 168 212 / var(--tw-border-opacity, 1))}.border-red-300{--tw-border-opacity:1;border-color:rgb(252 165 165 / var(--tw-border-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-gray-600{--tw-bg-opacity:1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.bg-gray-700{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.bg-green-100{--tw-bg-opacity:1;background-color:rgb(220 252 231 / var(--tw-bg-opacity, 1))}.bg-pink-100{--tw-bg-opacity:1;background-color:rgb(252 231 243 / var(--tw-bg-opacity, 1))}.bg-purple-100{--tw-bg-opacity:1;background-color:rgb(243 232 255 / var(--tw-bg-opacity, 1))}.bg-red-100{--tw-bg-opacity:1;background-color:rgb(254 226 226 / var(--tw-bg-opacity, 1))}.bg-red-600{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.bg-secondary{--tw-bg-opacity:1;background-color:rgb(35 47 62 / var(--tw-bg-opacity, 1))}.bg-yellow-100{--tw-bg-opacity:1;background-color:rgb(254 249 195 / var(--tw-bg-opacity, 1))}.bg-opacity-20{--tw-bg-opacity:0.2}.bg-opacity-30{--tw-bg-opacity:0.3}.bg-opacity-80{--tw-bg-opacity:0.8}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-blue-600{--tw-gradient-from:#2563eb var(--tw-gradient-from-position);--tw-gradient-to:rgb(37 99 235 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-red-500{--tw-gradient-from:#ef4444 var(--tw-gradient-from-position);--tw-gradient-to:rgb(239 68 68 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-yellow-300{--tw-gradient-from:#fde047 var(--tw-gradient-from-position);--tw-gradient-to:rgb(253 224 71 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-pink-500{--tw-gradient-to:#ec4899 var(--tw-gradient-to-position)}.to-purple-600{--tw-gradient-to:#9333ea var(--tw-gradient-to-position)}.to-yellow-400{--tw-gradient-to:#facc15 var(--tw-gradient-to-position)}.object-cover{object-fit:cover}.p-2{padding:0.5rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-8{padding-left:2rem;padding-right:2rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-4{padding-bottom:1rem}.pt-3{padding-top:0.75rem}.text-center{text-align:center}.font-\[\'Pacifico\'\]{font-family:'Pacifico'}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.text-black{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-green-600{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.text-green-700{--tw-text-opacity:1;color:rgb(21 128 61 / var(--tw-text-opacity, 1))}.text-green-800{--tw-text-opacity:1;color:rgb(22 101 52 / var(--tw-text-opacity, 1))}.text-pink-600{--tw-text-opacity:1;color:rgb(219 39 119 / var(--tw-text-opacity, 1))}.text-pink-700{--tw-text-opacity:1;color:rgb(190 24 93 / var(--tw-text-opacity, 1))}.text-pink-800{--tw-text-opacity:1;color:rgb(157 23 77 / var(--tw-text-opacity, 1))}.text-purple-600{--tw-text-opacity:1;color:rgb(147 51 234 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.text-red-700{--tw-text-opacity:1;color:rgb(185 28 28 / var(--tw-text-opacity, 1))}.text-red-800{--tw-text-opacity:1;color:rgb(153 27 27 / var(--tw-text-opacity, 1))}.text-secondary{--tw-text-opacity:1;color:rgb(35 47 62 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-400{--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}.text-yellow-600{--tw-text-opacity:1;color:rgb(202 138 4 / var(--tw-text-opacity, 1))}.line-through{-webkit-text-decoration-line:line-through;text-decoration-line:line-through}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-shadow{transition-property:box-shadow;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-600:hover{--tw-bg-opacity:1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-700:hover{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.hover\:bg-red-700:hover{--tw-bg-opacity:1;background-color:rgb(185 28 28 / var(--tw-bg-opacity, 1))}.hover\:bg-opacity-100:hover{--tw-bg-opacity:1}.hover\:text-blue-600:hover{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.hover\:text-gray-300:hover{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.hover\:underline:hover{-webkit-text-decoration-line:underline;text-decoration-line:underline}.hover\:shadow-md:hover{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.group:hover .group-hover\:block{display:block}@media (min-width: 768px){.md\:mb-0{margin-bottom:0px}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}}@media (min-width: 1024px){.lg\:col-span-2{grid-column:span 2 / span 2}.lg\:col-span-3{grid-column:span 3 / span 3}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}</style></head>
+<body class="bg-white">
+<div class="toast" id="toast"></div>
+<!-- Header -->
+<header class="bg-secondary text-white">
+<!-- Top Header -->
+<div class="flex items-center justify-between px-4 py-2">
+<!-- Logo and Delivery -->
+<div class="flex items-center space-x-4">
+<div class="flex items-center space-x-2">
+<span class="font-[&#39;Pacifico&#39;] text-xl">amazon</span>
+</div>
+<div class="flex items-center space-x-1 text-sm cursor-pointer hover:bg-gray-700 px-2 py-1 rounded">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-map-pin-line text-sm"></i>
+</div>
+<div>
+<div class="text-xs text-gray-300">Deliver to</div>
+<div class="font-semibold">Ghana</div>
+</div>
+</div>
+</div>
+<!-- Search Bar -->
+<div class="flex-1 max-w-2xl mx-4">
+<div class="flex">
+<select class="bg-gray-200 text-black px-3 py-2 rounded-l border-none text-sm">
+<option>All</option>
+<option>Electronics</option>
+<option>Fashion</option>
+<option>Home &amp; Garden</option>
+<option>Sports</option>
+<option>Books</option>
+</select>
+<input type="text" placeholder="Search Amazon" class="flex-1 px-3 py-2 border-none text-black text-sm" id="searchInput">
+<button class="search-btn" onclick="performSearch()">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-search-line text-secondary"></i>
+</div>
+</button>
+</div>
+</div>
+<!-- Right Side -->
+<div class="flex items-center space-x-4">
+<!-- Language -->
+<div class="flex items-center space-x-1 text-sm cursor-pointer hover:bg-gray-700 px-2 py-1 rounded">
+<img src="https://readdy.ai/api/search-image?query=United%20States%20flag%20icon%20small&amp;width=20&amp;height=15&amp;seq=flag001&amp;orientation=landscape" alt="US Flag" class="w-5 h-3 object-cover">
+<span>EN</span>
+<div class="w-3 h-3 flex items-center justify-center">
+<i class="ri-arrow-down-s-line text-xs"></i>
+</div>
+</div>
+<!-- Account -->
+<div class="dropdown relative">
+<div class="text-sm cursor-pointer hover:bg-gray-700 px-2 py-1 rounded">
+<div class="text-xs text-gray-300" id="userGreeting">Hello, sign in</div>
+<div class="font-semibold flex items-center">
+Account &amp; Lists
+<div class="w-3 h-3 flex items-center justify-center ml-1">
+<i class="ri-arrow-down-s-line text-xs"></i>
+</div>
+</div>
+</div>
+<div class="dropdown-content">
+<div class="p-4" id="accountDropdown">
+<button class="btn-primary w-full mb-2 !rounded-button whitespace-nowrap" onclick="showSignIn()">Sign In</button>
+<p class="text-sm text-gray-600 mb-3">New customer? <a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showSignUp()" class="text-blue-600">Start here</a></p>
+<div class="border-t pt-3">
+<h4 class="font-semibold mb-2">Your Account</h4>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showPage(&#39;account&#39;)" class="block text-sm text-gray-700 hover:text-blue-600 py-1">Your Account</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showPage(&#39;orders&#39;)" class="block text-sm text-gray-700 hover:text-blue-600 py-1">Your Orders</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showPage(&#39;lists&#39;)" class="block text-sm text-gray-700 hover:text-blue-600 py-1">Your Lists</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Returns & Orders -->
+<div class="text-sm cursor-pointer hover:bg-gray-700 px-2 py-1 rounded" onclick="showPage(&#39;orders&#39;)">
+<div class="text-xs text-gray-300">Returns</div>
+<div class="font-semibold">&amp; Orders</div>
+</div>
+<!-- Cart -->
+<div class="flex items-center cursor-pointer hover:bg-gray-700 px-2 py-1 rounded" onclick="showPage(&#39;cart&#39;)">
+<div class="relative">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-shopping-cart-line text-xl"></i>
+</div>
+<span class="cart-count absolute -top-1 -right-1" id="cartCount">0</span>
+</div>
+<span class="ml-1 text-sm font-semibold">Cart</span>
+</div>
+</div>
+</div>
+<!-- Navigation Bar -->
+<div class="bg-gray-700 px-4 py-2">
+<div class="flex items-center space-x-6">
+<div id="allCategoriesDropdown" class="relative">
+<div class="flex items-center space-x-1 cursor-pointer hover:bg-gray-600 px-2 py-1 rounded nav-item">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-menu-line"></i>
+</div>
+<span class="text-sm font-semibold">All</span>
+</div>
+<div id="categoriesMenu" class="absolute left-0 top-full mt-1 w-64 bg-white rounded-lg shadow-lg hidden z-50">
+<div class="p-2">
+<div class="category-item group">
+<div class="flex items-center justify-between p-2 hover:bg-gray-100 rounded cursor-pointer">
+<span class="text-gray-800">Electronics</span>
+<i class="ri-arrow-right-s-line"></i>
+</div>
+<div class="absolute left-full top-0 ml-1 w-64 bg-white rounded-lg shadow-lg hidden group-hover:block">
+<div class="p-2">
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Smartphones</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Laptops</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Tablets</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Headphones</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Cameras</a>
+</div>
+</div>
+</div>
+<div class="category-item group">
+<div class="flex items-center justify-between p-2 hover:bg-gray-100 rounded cursor-pointer">
+<span class="text-gray-800">Fashion</span>
+<i class="ri-arrow-right-s-line"></i>
+</div>
+<div class="absolute left-full top-0 ml-1 w-64 bg-white rounded-lg shadow-lg hidden group-hover:block">
+<div class="p-2">
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Women's Clothing</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Men's Clothing</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Shoes</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Watches</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Accessories</a>
+</div>
+</div>
+</div>
+<div class="category-item group">
+<div class="flex items-center justify-between p-2 hover:bg-gray-100 rounded cursor-pointer">
+<span class="text-gray-800">Home &amp; Garden</span>
+<i class="ri-arrow-right-s-line"></i>
+</div>
+<div class="absolute left-full top-0 ml-1 w-64 bg-white rounded-lg shadow-lg hidden group-hover:block">
+<div class="p-2">
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Kitchen &amp; Dining</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Furniture</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Decor</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Garden Tools</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Storage</a>
+</div>
+</div>
+</div>
+<div class="category-item group">
+<div class="flex items-center justify-between p-2 hover:bg-gray-100 rounded cursor-pointer">
+<span class="text-gray-800">Sports &amp; Outdoors</span>
+<i class="ri-arrow-right-s-line"></i>
+</div>
+<div class="absolute left-full top-0 ml-1 w-64 bg-white rounded-lg shadow-lg hidden group-hover:block">
+<div class="p-2">
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Exercise &amp; Fitness</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Outdoor Recreation</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Sports Equipment</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Camping Gear</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Athletic Clothing</a>
+</div>
+</div>
+</div>
+<div class="category-item group">
+<div class="flex items-center justify-between p-2 hover:bg-gray-100 rounded cursor-pointer">
+<span class="text-gray-800">Books</span>
+<i class="ri-arrow-right-s-line"></i>
+</div>
+<div class="absolute left-full top-0 ml-1 w-64 bg-white rounded-lg shadow-lg hidden group-hover:block">
+<div class="p-2">
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Fiction</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Non-Fiction</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Children's Books</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">Textbooks</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="block p-2 hover:bg-gray-100 rounded text-sm">eBooks</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showPage(&#39;deals&#39;)" class="text-sm hover:bg-gray-600 px-2 py-1 rounded nav-item">Today's Deals</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showPage(&#39;prime-video&#39;)" class="text-sm hover:bg-gray-600 px-2 py-1 rounded nav-item">Prime Video</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showPage(&#39;registry&#39;)" class="text-sm hover:bg-gray-600 px-2 py-1 rounded nav-item">Registry</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showPage(&#39;customer-service&#39;)" class="text-sm hover:bg-gray-600 px-2 py-1 rounded nav-item">Customer Service</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showPage(&#39;gift-cards&#39;)" class="text-sm hover:bg-gray-600 px-2 py-1 rounded nav-item">Gift Cards</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showPage(&#39;sell&#39;)" class="text-sm hover:bg-gray-600 px-2 py-1 rounded nav-item">Sell</a>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main>
+<!-- Home Page -->
+<div id="homePage" class="page-section active">
+<!-- Hero Slider -->
+<div class="slider-container h-96 bg-gradient-to-r from-yellow-300 to-yellow-400 relative">
+<div class="slider-track" id="sliderTrack" style="transform: translateX(-300%);">
+<div class="slider-item flex items-center justify-center relative">
+<img src="https://readdy.ai/api/search-image?query=Fashion%20clothing%20summer%20collection%20colorful%20dresses%20shirts%20accessories%20yellow%20background%20modern%20lifestyle%20photography&amp;width=1200&amp;height=400&amp;seq=slider001&amp;orientation=landscape" alt="Fashion Collection" class="w-full h-full object-cover">
+<div class="absolute inset-0 bg-black bg-opacity-20"></div>
+<div class="absolute left-8 text-white">
+<h2 class="text-4xl font-bold mb-4">Fashion finds under $50</h2>
+<button class="btn-primary !rounded-button whitespace-nowrap">Shop now</button>
+</div>
+</div>
+<div class="slider-item flex items-center justify-center">
+<img src="https://readdy.ai/api/search-image?query=Gaming%20setup%20RGB%20computer%20gaming%20chair%20headset%20colorful%20lights%20modern%20technology%20dark%20background%20professional%20esports&amp;width=1200&amp;height=400&amp;seq=slider002&amp;orientation=landscape" alt="Gaming Setup" class="w-full h-full object-cover">
+<div class="absolute inset-0 bg-black bg-opacity-30"></div>
+<div class="absolute left-8 text-white">
+<h2 class="text-4xl font-bold mb-4">Get your game on</h2>
+<button class="btn-primary !rounded-button whitespace-nowrap">Explore gaming</button>
+</div>
+</div>
+<div class="slider-item flex items-center justify-center">
+<img src="https://readdy.ai/api/search-image?query=Shopping%20sale%20red%20background%20discount%20tags%20promotional%20items%20lifestyle%20products%20modern%20commercial%20photography&amp;width=1200&amp;height=400&amp;seq=slider003&amp;orientation=landscape" alt="Shopping Sale" class="w-full h-full object-cover">
+<div class="absolute inset-0 bg-black bg-opacity-20"></div>
+<div class="absolute left-8 text-white">
+<h2 class="text-4xl font-bold mb-4">9.9 Super Shopping Day</h2>
+<button class="btn-primary !rounded-button whitespace-nowrap">Explore deals</button>
+</div>
+</div>
+<div class="slider-item flex items-center justify-center">
+<img src="https://readdy.ai/api/search-image?query=Home%20decor%20modern%20kitchen%20dining%20room%20accessories%20elegant%20lifestyle%20photography%20bright%20clean%20background&amp;width=1200&amp;height=400&amp;seq=slider004&amp;orientation=landscape" alt="Home Decor" class="w-full h-full object-cover">
+<div class="absolute inset-0 bg-black bg-opacity-20"></div>
+<div class="absolute left-8 text-white">
+<h2 class="text-4xl font-bold mb-4">New home arrivals under $50</h2>
+<button class="btn-primary !rounded-button whitespace-nowrap">Shop home</button>
+</div>
+</div>
+<div class="slider-item flex items-center justify-center">
+<img src="https://readdy.ai/api/search-image?query=Electronics%20smartphones%20laptops%20tablets%20modern%20technology%20gadgets%20sleek%20design%20professional%20product%20photography&amp;width=1200&amp;height=400&amp;seq=slider005&amp;orientation=landscape" alt="Electronics" class="w-full h-full object-cover">
+<div class="absolute inset-0 bg-black bg-opacity-30"></div>
+<div class="absolute left-8 text-white">
+<h2 class="text-4xl font-bold mb-4">Latest Electronics</h2>
+<button class="btn-primary !rounded-button whitespace-nowrap">Shop electronics</button>
+</div>
+</div>
+<div class="slider-item flex items-center justify-center">
+<img src="https://readdy.ai/api/search-image?query=Books%20education%20learning%20stack%20of%20colorful%20books%20reading%20lifestyle%20cozy%20atmosphere%20warm%20lighting&amp;width=1200&amp;height=400&amp;seq=slider006&amp;orientation=landscape" alt="Books" class="w-full h-full object-cover">
+<div class="absolute inset-0 bg-black bg-opacity-20"></div>
+<div class="absolute left-8 text-white">
+<h2 class="text-4xl font-bold mb-4">Expand Your Mind</h2>
+<button class="btn-primary !rounded-button whitespace-nowrap">Shop books</button>
+</div>
+</div>
+</div>
+<button class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full" onclick="prevSlide()">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-arrow-left-line text-secondary"></i>
+</div>
+</button>
+<button class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full" onclick="nextSlide()">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-arrow-right-line text-secondary"></i>
+</div>
+</button>
+</div>
+<!-- Product Sections -->
+<div class="container mx-auto px-4 py-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Shop Fashion for less -->
+<div class="bg-white p-6 rounded-lg shadow-md">
+<h3 class="text-xl font-bold mb-4">Shop Fashion for less</h3>
+<div class="grid grid-cols-2 gap-4 mb-4">
+<div class="text-center">
+<img src="https://readdy.ai/api/search-image?query=Denim%20jeans%20casual%20wear%20blue%20fabric%20texture%20fashion%20clothing%20product%20photography%20clean%20background&amp;width=150&amp;height=150&amp;seq=fashion001&amp;orientation=squarish" alt="Jeans" class="w-full h-24 object-cover rounded mb-2">
+<p class="text-sm">Jeans under $30</p>
+</div>
+<div class="text-center">
+<img src="https://readdy.ai/api/search-image?query=Colorful%20t-shirts%20casual%20tops%20fashion%20clothing%20vibrant%20colors%20product%20photography%20clean%20background&amp;width=150&amp;height=150&amp;seq=fashion002&amp;orientation=squarish" alt="Tops" class="w-full h-24 object-cover rounded mb-2">
+<p class="text-sm">Tops under $25</p>
+</div>
+<div class="text-center">
+<img src="https://readdy.ai/api/search-image?query=Summer%20dresses%20elegant%20fashion%20clothing%20colorful%20patterns%20product%20photography%20clean%20background&amp;width=150&amp;height=150&amp;seq=fashion003&amp;orientation=squarish" alt="Dresses" class="w-full h-24 object-cover rounded mb-2">
+<p class="text-sm">Dresses under $30</p>
+</div>
+<div class="text-center">
+<img src="https://readdy.ai/api/search-image?query=Fashion%20shoes%20sneakers%20boots%20elegant%20footwear%20product%20photography%20clean%20background&amp;width=150&amp;height=150&amp;seq=fashion004&amp;orientation=squarish" alt="Shoes" class="w-full h-24 object-cover rounded mb-2">
+<p class="text-sm">Shoes under $50</p>
+</div>
+</div>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="text-blue-600 text-sm hover:underline">See all deals</a>
+</div>
+<!-- Get your game on -->
+<div class="bg-white p-6 rounded-lg shadow-md">
+<h3 class="text-xl font-bold mb-4">Get your game on</h3>
+<img src="https://readdy.ai/api/search-image?query=Gaming%20computer%20setup%20RGB%20lighting%20mechanical%20keyboard%20gaming%20mouse%20colorful%20neon%20lights%20modern%20technology%20dark%20background&amp;width=300&amp;height=200&amp;seq=gaming001&amp;orientation=landscape" alt="Gaming Setup" class="w-full h-40 object-cover rounded mb-4">
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="text-blue-600 text-sm hover:underline">Shop gaming</a>
+</div>
+<!-- 9.9 Super Shopping Day -->
+<div class="bg-white p-6 rounded-lg shadow-md">
+<h3 class="text-xl font-bold mb-4">9.9 Super Shopping Day</h3>
+<img src="https://readdy.ai/api/search-image?query=Shopping%20sale%20discount%20promotional%20items%20red%20background%20commercial%20photography%20lifestyle%20products%20modern&amp;width=300&amp;height=200&amp;seq=sale001&amp;orientation=landscape" alt="Shopping Sale" class="w-full h-40 object-cover rounded mb-4">
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="text-blue-600 text-sm hover:underline">Explore deals</a>
+</div>
+<!-- New home arrivals under $50 -->
+<div class="bg-white p-6 rounded-lg shadow-md">
+<h3 class="text-xl font-bold mb-4">New home arrivals under $50</h3>
+<div class="grid grid-cols-2 gap-4 mb-4">
+<div class="text-center">
+<img src="https://readdy.ai/api/search-image?query=Kitchen%20dining%20cookware%20pots%20pans%20elegant%20home%20accessories%20product%20photography%20clean%20background&amp;width=150&amp;height=150&amp;seq=home001&amp;orientation=squarish" alt="Kitchen" class="w-full h-24 object-cover rounded mb-2">
+<p class="text-sm">Kitchen &amp; Dining</p>
+</div>
+<div class="text-center">
+<img src="https://readdy.ai/api/search-image?query=Home%20improvement%20tools%20hardware%20DIY%20equipment%20modern%20lifestyle%20product%20photography%20clean%20background&amp;width=150&amp;height=150&amp;seq=home002&amp;orientation=squarish" alt="Home Improvement" class="w-full h-24 object-cover rounded mb-2">
+<p class="text-sm">Home Improvement</p>
+</div>
+<div class="text-center">
+<img src="https://readdy.ai/api/search-image?query=Home%20decor%20decorative%20items%20elegant%20accessories%20modern%20lifestyle%20product%20photography%20clean%20background&amp;width=150&amp;height=150&amp;seq=home003&amp;orientation=squarish" alt="Decor" class="w-full h-24 object-cover rounded mb-2">
+<p class="text-sm">Décor</p>
+</div>
+<div class="text-center">
+<img src="https://readdy.ai/api/search-image?query=Bedding%20bath%20towels%20sheets%20comfortable%20home%20textiles%20product%20photography%20clean%20background&amp;width=150&amp;height=150&amp;seq=home004&amp;orientation=squarish" alt="Bedding" class="w-full h-24 object-cover rounded mb-2">
+<p class="text-sm">Bedding &amp; Bath</p>
+</div>
+</div>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="text-blue-600 text-sm hover:underline">Shop the latest from Home</a>
+</div>
+</div>
+<!-- Featured Products -->
+<div class="mt-12">
+<h2 class="text-2xl font-bold mb-6">Featured Products</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="productsGrid">
+<div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition-all duration-300">
+<img src="https://readdy.ai/api/search-image?query=$%7Bproduct.image%7D&amp;width=250&amp;height=200&amp;seq=laptop-pro&amp;orientation=landscape" alt="Professional Laptop" class="w-full h-48 object-cover">
+<div class="p-4">
+<h3 class="font-semibold text-lg mb-2">Professional Laptop</h3>
+<div class="flex items-center mb-2">
+<div class="star-rating mr-2">
+★★★★☆
+</div>
+<span class="text-sm text-gray-600">(1234)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xl font-bold text-green-600">$899.99</span>
+<button class="btn-primary !rounded-button whitespace-nowrap" onclick="addToCart(&#39;laptop-pro&#39;, &#39;Professional Laptop&#39;, 899.99)">Add to Cart</button>
+</div>
+</div>
+</div>
+
+<div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition-all duration-300">
+<img src="https://readdy.ai/api/search-image?query=$%7Bproduct.image%7D&amp;width=250&amp;height=200&amp;seq=smartphone-x&amp;orientation=landscape" alt="Smartphone X" class="w-full h-48 object-cover">
+<div class="p-4">
+<h3 class="font-semibold text-lg mb-2">Smartphone X</h3>
+<div class="flex items-center mb-2">
+<div class="star-rating mr-2">
+★★★★☆
+</div>
+<span class="text-sm text-gray-600">(2456)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xl font-bold text-green-600">$699.99</span>
+<button class="btn-primary !rounded-button whitespace-nowrap" onclick="addToCart(&#39;smartphone-x&#39;, &#39;Smartphone X&#39;, 699.99)">Add to Cart</button>
+</div>
+</div>
+</div>
+
+<div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition-all duration-300">
+<img src="https://readdy.ai/api/search-image?query=$%7Bproduct.image%7D&amp;width=250&amp;height=200&amp;seq=coffee-maker&amp;orientation=landscape" alt="Premium Coffee Maker" class="w-full h-48 object-cover">
+<div class="p-4">
+<h3 class="font-semibold text-lg mb-2">Premium Coffee Maker</h3>
+<div class="flex items-center mb-2">
+<div class="star-rating mr-2">
+★★★★☆
+</div>
+<span class="text-sm text-gray-600">(567)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xl font-bold text-green-600">$149.99</span>
+<button class="btn-primary !rounded-button whitespace-nowrap" onclick="addToCart(&#39;coffee-maker&#39;, &#39;Premium Coffee Maker&#39;, 149.99)">Add to Cart</button>
+</div>
+</div>
+</div>
+
+<div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition-all duration-300">
+<img src="https://readdy.ai/api/search-image?query=$%7Bproduct.image%7D&amp;width=250&amp;height=200&amp;seq=running-shoes&amp;orientation=landscape" alt="Athletic Running Shoes" class="w-full h-48 object-cover">
+<div class="p-4">
+<h3 class="font-semibold text-lg mb-2">Athletic Running Shoes</h3>
+<div class="flex items-center mb-2">
+<div class="star-rating mr-2">
+★★★★☆
+</div>
+<span class="text-sm text-gray-600">(890)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xl font-bold text-green-600">$89.99</span>
+<button class="btn-primary !rounded-button whitespace-nowrap" onclick="addToCart(&#39;running-shoes&#39;, &#39;Athletic Running Shoes&#39;, 89.99)">Add to Cart</button>
+</div>
+</div>
+</div>
+
+<div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition-all duration-300">
+<img src="https://readdy.ai/api/search-image?query=$%7Bproduct.image%7D&amp;width=250&amp;height=200&amp;seq=tablet-air&amp;orientation=landscape" alt="Tablet Air" class="w-full h-48 object-cover">
+<div class="p-4">
+<h3 class="font-semibold text-lg mb-2">Tablet Air</h3>
+<div class="flex items-center mb-2">
+<div class="star-rating mr-2">
+★★★★☆
+</div>
+<span class="text-sm text-gray-600">(1567)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xl font-bold text-green-600">$329.99</span>
+<button class="btn-primary !rounded-button whitespace-nowrap" onclick="addToCart(&#39;tablet-air&#39;, &#39;Tablet Air&#39;, 329.99)">Add to Cart</button>
+</div>
+</div>
+</div>
+
+<div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition-all duration-300">
+<img src="https://readdy.ai/api/search-image?query=$%7Bproduct.image%7D&amp;width=250&amp;height=200&amp;seq=wireless-mouse&amp;orientation=landscape" alt="Wireless Gaming Mouse" class="w-full h-48 object-cover">
+<div class="p-4">
+<h3 class="font-semibold text-lg mb-2">Wireless Gaming Mouse</h3>
+<div class="flex items-center mb-2">
+<div class="star-rating mr-2">
+★★★★☆
+</div>
+<span class="text-sm text-gray-600">(234)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xl font-bold text-green-600">$59.99</span>
+<button class="btn-primary !rounded-button whitespace-nowrap" onclick="addToCart(&#39;wireless-mouse&#39;, &#39;Wireless Gaming Mouse&#39;, 59.99)">Add to Cart</button>
+</div>
+</div>
+</div>
+
+<div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition-all duration-300">
+<img src="https://readdy.ai/api/search-image?query=$%7Bproduct.image%7D&amp;width=250&amp;height=200&amp;seq=desk-lamp&amp;orientation=landscape" alt="LED Desk Lamp" class="w-full h-48 object-cover">
+<div class="p-4">
+<h3 class="font-semibold text-lg mb-2">LED Desk Lamp</h3>
+<div class="flex items-center mb-2">
+<div class="star-rating mr-2">
+★★★★☆
+</div>
+<span class="text-sm text-gray-600">(345)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xl font-bold text-green-600">$39.99</span>
+<button class="btn-primary !rounded-button whitespace-nowrap" onclick="addToCart(&#39;desk-lamp&#39;, &#39;LED Desk Lamp&#39;, 39.99)">Add to Cart</button>
+</div>
+</div>
+</div>
+
+<div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition-all duration-300">
+<img src="https://readdy.ai/api/search-image?query=$%7Bproduct.image%7D&amp;width=250&amp;height=200&amp;seq=backpack-travel&amp;orientation=landscape" alt="Travel Backpack" class="w-full h-48 object-cover">
+<div class="p-4">
+<h3 class="font-semibold text-lg mb-2">Travel Backpack</h3>
+<div class="flex items-center mb-2">
+<div class="star-rating mr-2">
+★★★★☆
+</div>
+<span class="text-sm text-gray-600">(678)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xl font-bold text-green-600">$79.99</span>
+<button class="btn-primary !rounded-button whitespace-nowrap" onclick="addToCart(&#39;backpack-travel&#39;, &#39;Travel Backpack&#39;, 79.99)">Add to Cart</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Other Pages -->
+<div id="dealsPage" class="page-section">
+<div class="container mx-auto px-4 py-8">
+<h1 class="text-3xl font-bold mb-6">Today's Deals</h1>
+<div class="bg-red-100 border border-red-300 rounded-lg p-6 mb-8">
+<h2 class="text-2xl font-bold text-red-800 mb-4">Lightning Deals</h2>
+<p class="text-red-700 mb-4">Limited time offers - grab them before they're gone!</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white p-4 rounded-lg shadow">
+<img src="https://readdy.ai/api/search-image?query=Wireless%20headphones%20modern%20technology%20black%20sleek%20design%20product%20photography%20clean%20background&amp;width=200&amp;height=200&amp;seq=deal001&amp;orientation=squarish" alt="Wireless Headphones" class="w-full h-32 object-cover rounded mb-3">
+<h3 class="font-semibold mb-2">Wireless Headphones</h3>
+<div class="flex items-center mb-2">
+<span class="text-red-600 font-bold text-lg">$49.99</span>
+<span class="text-gray-500 line-through ml-2">$99.99</span>
+<span class="bg-red-600 text-white text-xs px-2 py-1 rounded ml-2">50% OFF</span>
+</div>
+<div class="text-yellow-400 mb-2">★★★★☆ (4.2)</div>
+<button class="btn-primary w-full !rounded-button whitespace-nowrap" onclick="addToCart(&#39;wireless-headphones&#39;, &#39;Wireless Headphones&#39;, 49.99)">Add to Cart</button>
+</div>
+<div class="bg-white p-4 rounded-lg shadow">
+<img src="https://readdy.ai/api/search-image?query=Smartwatch%20fitness%20tracker%20modern%20technology%20wearable%20device%20product%20photography%20clean%20background&amp;width=200&amp;height=200&amp;seq=deal002&amp;orientation=squarish" alt="Smartwatch" class="w-full h-32 object-cover rounded mb-3">
+<h3 class="font-semibold mb-2">Fitness Smartwatch</h3>
+<div class="flex items-center mb-2">
+<span class="text-red-600 font-bold text-lg">$79.99</span>
+<span class="text-gray-500 line-through ml-2">$159.99</span>
+<span class="bg-red-600 text-white text-xs px-2 py-1 rounded ml-2">50% OFF</span>
+</div>
+<div class="text-yellow-400 mb-2">★★★★★ (4.8)</div>
+<button class="btn-primary w-full !rounded-button whitespace-nowrap" onclick="addToCart(&#39;smartwatch&#39;, &#39;Fitness Smartwatch&#39;, 79.99)">Add to Cart</button>
+</div>
+<div class="bg-white p-4 rounded-lg shadow">
+<img src="https://readdy.ai/api/search-image?query=Bluetooth%20speaker%20portable%20wireless%20audio%20device%20modern%20technology%20product%20photography%20clean%20background&amp;width=200&amp;height=200&amp;seq=deal003&amp;orientation=squarish" alt="Bluetooth Speaker" class="w-full h-32 object-cover rounded mb-3">
+<h3 class="font-semibold mb-2">Portable Bluetooth Speaker</h3>
+<div class="flex items-center mb-2">
+<span class="text-red-600 font-bold text-lg">$29.99</span>
+<span class="text-gray-500 line-through ml-2">$59.99</span>
+<span class="bg-red-600 text-white text-xs px-2 py-1 rounded ml-2">50% OFF</span>
+</div>
+<div class="text-yellow-400 mb-2">★★★★☆ (4.1)</div>
+<button class="btn-primary w-full !rounded-button whitespace-nowrap" onclick="addToCart(&#39;bluetooth-speaker&#39;, &#39;Portable Bluetooth Speaker&#39;, 29.99)">Add to Cart</button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-white p-4 rounded-lg shadow">
+<h3 class="font-bold mb-4">Electronics Deals</h3>
+<p class="text-gray-600 mb-4">Up to 70% off on electronics</p>
+<img src="https://readdy.ai/api/search-image?query=Electronics%20gadgets%20smartphones%20tablets%20laptops%20modern%20technology%20collection%20product%20photography%20clean%20background&amp;width=250&amp;height=150&amp;seq=electronics001&amp;orientation=landscape" alt="Electronics" class="w-full h-24 object-cover rounded">
+</div>
+<div class="bg-white p-4 rounded-lg shadow">
+<h3 class="font-bold mb-4">Fashion Deals</h3>
+<p class="text-gray-600 mb-4">Trendy clothes at great prices</p>
+<img src="https://readdy.ai/api/search-image?query=Fashion%20clothing%20collection%20trendy%20outfits%20colorful%20garments%20lifestyle%20photography%20clean%20background&amp;width=250&amp;height=150&amp;seq=fashiondeals001&amp;orientation=landscape" alt="Fashion" class="w-full h-24 object-cover rounded">
+</div>
+<div class="bg-white p-4 rounded-lg shadow">
+<h3 class="font-bold mb-4">Home &amp; Garden</h3>
+<p class="text-gray-600 mb-4">Transform your living space</p>
+<img src="https://readdy.ai/api/search-image?query=Home%20garden%20decor%20furniture%20plants%20lifestyle%20modern%20interior%20design%20clean%20background&amp;width=250&amp;height=150&amp;seq=homedeals001&amp;orientation=landscape" alt="Home &amp; Garden" class="w-full h-24 object-cover rounded">
+</div>
+<div class="bg-white p-4 rounded-lg shadow">
+<h3 class="font-bold mb-4">Sports &amp; Outdoors</h3>
+<p class="text-gray-600 mb-4">Gear up for adventure</p>
+<img src="https://readdy.ai/api/search-image?query=Sports%20outdoor%20equipment%20fitness%20gear%20adventure%20lifestyle%20photography%20clean%20background&amp;width=250&amp;height=150&amp;seq=sportsdeals001&amp;orientation=landscape" alt="Sports" class="w-full h-24 object-cover rounded">
+</div>
+</div>
+</div>
+</div>
+<div id="primeVideoPage" class="page-section">
+<div class="container mx-auto px-4 py-8">
+<h1 class="text-3xl font-bold mb-6">Prime Video</h1>
+<div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-8 mb-8">
+<h2 class="text-4xl font-bold mb-4">Watch thousands of movies and TV shows</h2>
+<p class="text-xl mb-6">Stream unlimited content with Prime Video</p>
+<button class="btn-primary text-lg px-8 py-3 !rounded-button whitespace-nowrap">Start your free trial</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white rounded-lg shadow overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=Movie%20poster%20action%20thriller%20cinematic%20dark%20atmosphere%20professional%20entertainment%20photography&amp;width=300&amp;height=400&amp;seq=movie001&amp;orientation=portrait" alt="Action Movie" class="w-full h-64 object-cover">
+<div class="p-4">
+<h3 class="font-bold mb-2">Action Thriller</h3>
+<p class="text-gray-600 text-sm">High-octane action and suspense</p>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=Comedy%20movie%20poster%20bright%20colorful%20fun%20entertainment%20cinema%20professional%20photography&amp;width=300&amp;height=400&amp;seq=movie002&amp;orientation=portrait" alt="Comedy" class="w-full h-64 object-cover">
+<div class="p-4">
+<h3 class="font-bold mb-2">Comedy Special</h3>
+<p class="text-gray-600 text-sm">Laugh out loud comedy</p>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=Drama%20series%20poster%20emotional%20storytelling%20cinematic%20professional%20entertainment%20photography&amp;width=300&amp;height=400&amp;seq=movie003&amp;orientation=portrait" alt="Drama Series" class="w-full h-64 object-cover">
+<div class="p-4">
+<h3 class="font-bold mb-2">Drama Series</h3>
+<p class="text-gray-600 text-sm">Compelling storytelling</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="registryPage" class="page-section">
+<div class="container mx-auto px-4 py-8">
+<h1 class="text-3xl font-bold mb-6">Gift Registry</h1>
+<div class="bg-pink-100 border border-pink-300 rounded-lg p-6 mb-8">
+<h2 class="text-2xl font-bold text-pink-800 mb-4">Create Your Perfect Registry</h2>
+<p class="text-pink-700 mb-4">Whether it's a wedding, baby shower, or birthday, create a registry that makes gift-giving easy for your friends and family.</p>
+<button class="btn-primary !rounded-button whitespace-nowrap">Create Registry</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white p-6 rounded-lg shadow text-center">
+<div class="w-16 h-16 flex items-center justify-center mx-auto mb-4 bg-pink-100 rounded-full">
+<i class="ri-heart-line text-2xl text-pink-600"></i>
+</div>
+<h3 class="font-bold mb-2">Wedding Registry</h3>
+<p class="text-gray-600 mb-4">Start your new life together with everything you need</p>
+<button class="btn-secondary !rounded-button whitespace-nowrap">Learn More</button>
+</div>
+<div class="bg-white p-6 rounded-lg shadow text-center">
+<div class="w-16 h-16 flex items-center justify-center mx-auto mb-4 bg-blue-100 rounded-full">
+<i class="ri-baby-line text-2xl text-blue-600"></i>
+</div>
+<h3 class="font-bold mb-2">Baby Registry</h3>
+<p class="text-gray-600 mb-4">Prepare for your little one's arrival</p>
+<button class="btn-secondary !rounded-button whitespace-nowrap">Learn More</button>
+</div>
+<div class="bg-white p-6 rounded-lg shadow text-center">
+<div class="w-16 h-16 flex items-center justify-center mx-auto mb-4 bg-green-100 rounded-full">
+<i class="ri-gift-line text-2xl text-green-600"></i>
+</div>
+<h3 class="font-bold mb-2">Birthday Registry</h3>
+<p class="text-gray-600 mb-4">Make your special day even more memorable</p>
+<button class="btn-secondary !rounded-button whitespace-nowrap">Learn More</button>
+</div>
+</div>
+</div>
+</div>
+<div id="customerServicePage" class="page-section">
+<div class="container mx-auto px-4 py-8">
+<h1 class="text-3xl font-bold mb-6">Customer Service</h1>
+<div class="bg-blue-100 border border-blue-300 rounded-lg p-6 mb-8">
+<h2 class="text-2xl font-bold text-blue-800 mb-4">How can we help you?</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<button class="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow">
+<div class="w-12 h-12 flex items-center justify-center mx-auto mb-2 bg-blue-100 rounded-full">
+<i class="ri-truck-line text-xl text-blue-600"></i>
+</div>
+<h3 class="font-semibold">Track Your Package</h3>
+</button>
+<button class="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow">
+<div class="w-12 h-12 flex items-center justify-center mx-auto mb-2 bg-green-100 rounded-full">
+<i class="ri-arrow-go-back-line text-xl text-green-600"></i>
+</div>
+<h3 class="font-semibold">Return Items</h3>
+</button>
+<button class="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow">
+<div class="w-12 h-12 flex items-center justify-center mx-auto mb-2 bg-purple-100 rounded-full">
+<i class="ri-customer-service-line text-xl text-purple-600"></i>
+</div>
+<h3 class="font-semibold">Contact Us</h3>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="bg-white p-6 rounded-lg shadow">
+<h3 class="text-xl font-bold mb-4">Frequently Asked Questions</h3>
+<div class="space-y-4">
+<div class="border-b pb-4">
+<h4 class="font-semibold mb-2">How do I track my order?</h4>
+<p class="text-gray-600 text-sm">You can track your order by going to "Your Orders" and clicking on the tracking information.</p>
+</div>
+<div class="border-b pb-4">
+<h4 class="font-semibold mb-2">What is your return policy?</h4>
+<p class="text-gray-600 text-sm">Most items can be returned within 30 days of delivery for a full refund.</p>
+</div>
+<div class="border-b pb-4">
+<h4 class="font-semibold mb-2">How do I cancel my order?</h4>
+<p class="text-gray-600 text-sm">You can cancel your order before it ships by going to "Your Orders" and selecting "Cancel items".</p>
+</div>
+</div>
+</div>
+<div class="bg-white p-6 rounded-lg shadow">
+<h3 class="text-xl font-bold mb-4">Contact Information</h3>
+<div class="space-y-4">
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center mr-3 bg-blue-100 rounded-full">
+<i class="ri-phone-line text-blue-600"></i>
+</div>
+<div>
+<p class="font-semibold">Phone Support</p>
+<p class="text-gray-600 text-sm">1-888-280-4331</p>
+</div>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center mr-3 bg-green-100 rounded-full">
+<i class="ri-chat-3-line text-green-600"></i>
+</div>
+<div>
+<p class="font-semibold">Live Chat</p>
+<p class="text-gray-600 text-sm">Available 24/7</p>
+</div>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center mr-3 bg-purple-100 rounded-full">
+<i class="ri-mail-line text-purple-600"></i>
+</div>
+<div>
+<p class="font-semibold">Email Support</p>
+<p class="text-gray-600 text-sm">support@amazon.com</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="giftCardsPage" class="page-section">
+<div class="container mx-auto px-4 py-8">
+<h1 class="text-3xl font-bold mb-6">Gift Cards</h1>
+<div class="bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg p-8 mb-8">
+<h2 class="text-4xl font-bold mb-4">Give the Perfect Gift</h2>
+<p class="text-xl mb-6">Amazon Gift Cards - the gift that always fits</p>
+<button class="bg-white text-red-500 font-bold px-8 py-3 rounded-lg hover:bg-gray-100 !rounded-button whitespace-nowrap">Shop Gift Cards</button>
+</div>
+<!-- Featured Gift Card Categories -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+<div class="bg-white rounded-lg shadow p-6 text-center">
+<div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-blue-100 rounded-full">
+<i class="ri-mail-send-line text-2xl text-blue-600"></i>
+</div>
+<h3 class="font-bold mb-2">eGift Cards</h3>
+<p class="text-gray-600 text-sm mb-4">Send instantly via email</p>
+<button class="btn-primary w-full !rounded-button whitespace-nowrap">Send Now</button>
+</div>
+<div class="bg-white rounded-lg shadow p-6 text-center">
+<div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-green-100 rounded-full">
+<i class="ri-gift-line text-2xl text-green-600"></i>
+</div>
+<h3 class="font-bold mb-2">Print at Home</h3>
+<p class="text-gray-600 text-sm mb-4">Ready to give in minutes</p>
+<button class="btn-primary w-full !rounded-button whitespace-nowrap">Create Now</button>
+</div>
+<div class="bg-white rounded-lg shadow p-6 text-center">
+<div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-purple-100 rounded-full">
+<i class="ri-mail-line text-2xl text-purple-600"></i>
+</div>
+<h3 class="font-bold mb-2">Mail a Gift Card</h3>
+<p class="text-gray-600 text-sm mb-4">Delivered by post</p>
+<button class="btn-primary w-full !rounded-button whitespace-nowrap">Order Now</button>
+</div>
+<div class="bg-white rounded-lg shadow p-6 text-center">
+<div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-yellow-100 rounded-full">
+<i class="ri-building-2-line text-2xl text-yellow-600"></i>
+</div>
+<h3 class="font-bold mb-2">Bulk Orders</h3>
+<p class="text-gray-600 text-sm mb-4">Perfect for businesses</p>
+<button class="btn-primary w-full !rounded-button whitespace-nowrap">Learn More</button>
+</div>
+</div>
+<!-- Gift Card Designs -->
+<h2 class="text-2xl font-bold mb-6">Popular Gift Card Designs</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<div class="bg-white rounded-lg shadow overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=Birthday%20celebration%20gift%20card%20design%20colorful%20festive%20elegant%20modern%20graphics%20clean%20background&amp;width=300&amp;height=200&amp;seq=gift004&amp;orientation=landscape" alt="Birthday Gift Card" class="w-full h-48 object-cover">
+<div class="p-4">
+<h3 class="font-bold mb-2">Birthday Celebration</h3>
+<p class="text-gray-600 text-sm mb-4">Make their special day even better</p>
+<div class="flex justify-between items-center">
+<div class="space-y-1">
+<p class="font-semibold">$25 - $500</p>
+<div class="flex space-x-2">
+<button class="px-3 py-1 border border-gray-300 rounded-full text-sm hover:bg-gray-100">$25</button>
+<button class="px-3 py-1 border border-gray-300 rounded-full text-sm hover:bg-gray-100">$50</button>
+<button class="px-3 py-1 border border-gray-300 rounded-full text-sm hover:bg-gray-100">$100</button>
+</div>
+</div>
+<button class="btn-primary !rounded-button whitespace-nowrap">Buy Now</button>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=Thank%20you%20appreciation%20gift%20card%20design%20elegant%20professional%20modern%20graphics%20clean%20background&amp;width=300&amp;height=200&amp;seq=gift005&amp;orientation=landscape" alt="Thank You Gift Card" class="w-full h-48 object-cover">
+<div class="p-4">
+<h3 class="font-bold mb-2">Thank You</h3>
+<p class="text-gray-600 text-sm mb-4">Show your appreciation</p>
+<div class="flex justify-between items-center">
+<div class="space-y-1">
+<p class="font-semibold">$25 - $500</p>
+<div class="flex space-x-2">
+<button class="px-3 py-1 border border-gray-300 rounded-full text-sm hover:bg-gray-100">$25</button>
+<button class="px-3 py-1 border border-gray-300 rounded-full text-sm hover:bg-gray-100">$50</button>
+<button class="px-3 py-1 border border-gray-300 rounded-full text-sm hover:bg-gray-100">$100</button>
+</div>
+</div>
+<button class="btn-primary !rounded-button whitespace-nowrap">Buy Now</button>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=Congratulations%20celebration%20gift%20card%20design%20modern%20elegant%20festive%20graphics%20clean%20background&amp;width=300&amp;height=200&amp;seq=gift006&amp;orientation=landscape" alt="Congratulations Gift Card" class="w-full h-48 object-cover">
+<div class="p-4">
+<h3 class="font-bold mb-2">Congratulations</h3>
+<p class="text-gray-600 text-sm mb-4">Celebrate their achievement</p>
+<div class="flex justify-between items-center">
+<div class="space-y-1">
+<p class="font-semibold">$25 - $500</p>
+<div class="flex space-x-2">
+<button class="px-3 py-1 border border-gray-300 rounded-full text-sm hover:bg-gray-100">$25</button>
+<button class="px-3 py-1 border border-gray-300 rounded-full text-sm hover:bg-gray-100">$50</button>
+<button class="px-3 py-1 border border-gray-300 rounded-full text-sm hover:bg-gray-100">$100</button>
+</div>
+</div>
+<button class="btn-primary !rounded-button whitespace-nowrap">Buy Now</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Gift Card Features -->
+<div class="bg-gray-50 rounded-lg p-8 mb-12">
+<h2 class="text-2xl font-bold mb-6">Why Choose Amazon Gift Cards?</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="flex items-start space-x-4">
+<div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full flex-shrink-0">
+<i class="ri-timer-line text-xl text-blue-600"></i>
+</div>
+<div>
+<h3 class="font-bold mb-2">Instant Delivery</h3>
+<p class="text-gray-600 text-sm">Send eGift cards immediately or schedule for later</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="w-12 h-12 flex items-center justify-center bg-green-100 rounded-full flex-shrink-0">
+<i class="ri-shield-check-line text-xl text-green-600"></i>
+</div>
+<div>
+<h3 class="font-bold mb-2">Safe &amp; Secure</h3>
+<p class="text-gray-600 text-sm">Protected by Amazon's world-class security</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="w-12 h-12 flex items-center justify-center bg-purple-100 rounded-full flex-shrink-0">
+<i class="ri-calendar-check-line text-xl text-purple-600"></i>
+</div>
+<div>
+<h3 class="font-bold mb-2">Never Expires</h3>
+<p class="text-gray-600 text-sm">Gift cards can be used anytime</p>
+</div>
+</div>
+</div>
+</div>
+<!-- FAQ Section -->
+<div class="bg-white rounded-lg shadow p-8">
+<h2 class="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
+<div class="space-y-4">
+<div class="border-b pb-4">
+<h3 class="font-bold mb-2">How do I redeem a gift card?</h3>
+<p class="text-gray-600 text-sm">Enter your claim code at checkout or add it to your account balance for future purchases.</p>
+</div>
+<div class="border-b pb-4">
+<h3 class="font-bold mb-2">Can I use my gift card internationally?</h3>
+<p class="text-gray-600 text-sm">Gift cards can only be redeemed on the Amazon website for the country where they were purchased.</p>
+</div>
+<div class="pb-4">
+<h3 class="font-bold mb-2">What if I lose my gift card?</h3>
+<p class="text-gray-600 text-sm">Keep your gift card details safe. Physical gift cards cannot be replaced if lost or stolen.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="sellPage" class="page-section">
+<div class="container mx-auto px-4 py-8">
+<h1 class="text-3xl font-bold mb-6">Sell on Amazon</h1>
+<div class="bg-green-100 border border-green-300 rounded-lg p-8 mb-8">
+<h2 class="text-3xl font-bold text-green-800 mb-4">Start Your Business Journey</h2>
+<p class="text-green-700 text-lg mb-6">Reach millions of customers worldwide and grow your business with Amazon</p>
+<button class="btn-primary text-lg px-8 py-3 !rounded-button whitespace-nowrap">Start Selling</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="bg-white p-6 rounded-lg shadow text-center">
+<div class="w-16 h-16 flex items-center justify-center mx-auto mb-4 bg-blue-100 rounded-full">
+<i class="ri-global-line text-2xl text-blue-600"></i>
+</div>
+<h3 class="font-bold mb-2">Global Reach</h3>
+<p class="text-gray-600">Access to millions of customers worldwide</p>
+</div>
+<div class="bg-white p-6 rounded-lg shadow text-center">
+<div class="w-16 h-16 flex items-center justify-center mx-auto mb-4 bg-green-100 rounded-full">
+<i class="ri-truck-line text-2xl text-green-600"></i>
+</div>
+<h3 class="font-bold mb-2">Fulfillment Services</h3>
+<p class="text-gray-600">Let Amazon handle storage and shipping</p>
+</div>
+<div class="bg-white p-6 rounded-lg shadow text-center">
+<div class="w-16 h-16 flex items-center justify-center mx-auto mb-4 bg-purple-100 rounded-full">
+<i class="ri-bar-chart-line text-2xl text-purple-600"></i>
+</div>
+<h3 class="font-bold mb-2">Analytics &amp; Tools</h3>
+<p class="text-gray-600">Powerful tools to grow your business</p>
+</div>
+</div>
+<div class="bg-white p-6 rounded-lg shadow">
+<h3 class="text-xl font-bold mb-4">Selling Plans</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="border border-gray-200 rounded-lg p-6">
+<h4 class="font-bold text-lg mb-2">Individual Plan</h4>
+<p class="text-2xl font-bold text-green-600 mb-4">$0.99 per item sold</p>
+<ul class="text-sm text-gray-600 space-y-2 mb-6">
+<li>• No monthly subscription fee</li>
+<li>• Access to basic selling tools</li>
+<li>• Perfect for occasional sellers</li>
+</ul>
+<button class="btn-secondary w-full !rounded-button whitespace-nowrap">Choose Individual</button>
+</div>
+<div class="border border-gray-200 rounded-lg p-6 bg-blue-50">
+<h4 class="font-bold text-lg mb-2">Professional Plan</h4>
+<p class="text-2xl font-bold text-blue-600 mb-4">$39.99 per month</p>
+<ul class="text-sm text-gray-600 space-y-2 mb-6">
+<li>• No per-item fee</li>
+<li>• Advanced selling tools</li>
+<li>• Bulk listing and inventory management</li>
+<li>• Access to advertising tools</li>
+</ul>
+<button class="btn-primary w-full !rounded-button whitespace-nowrap">Choose Professional</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Cart Page -->
+<div id="cartPage" class="page-section">
+<div class="container mx-auto px-4 py-8">
+<h1 class="text-3xl font-bold mb-6">Shopping Cart</h1>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2">
+<div id="cartItems" class="bg-white rounded-lg shadow p-6">
+<p class="text-gray-600">Your cart is empty</p>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow p-6 h-fit">
+<h3 class="text-xl font-bold mb-4">Order Summary</h3>
+<div class="space-y-2 mb-4">
+<div class="flex justify-between">
+<span>Subtotal:</span>
+<span id="subtotal">$0.00</span>
+</div>
+<div class="flex justify-between">
+<span>Shipping:</span>
+<span id="shipping">$0.00</span>
+</div>
+<div class="flex justify-between">
+<span>Tax:</span>
+<span id="tax">$0.00</span>
+</div>
+<hr>
+<div class="flex justify-between font-bold text-lg">
+<span>Total:</span>
+<span id="total">$0.00</span>
+</div>
+</div>
+<button class="btn-primary w-full mb-3 !rounded-button whitespace-nowrap" onclick="checkout()">Proceed to Checkout</button>
+<button class="btn-secondary w-full !rounded-button whitespace-nowrap" onclick="showPage(&#39;home&#39;)">Continue Shopping</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Account Page -->
+<div id="accountPage" class="page-section">
+<div class="container mx-auto px-4 py-8">
+<h1 class="text-3xl font-bold mb-6">Your Account</h1>
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+<div class="account-sidebar">
+<h3 class="font-bold mb-4">Account &amp; Settings</h3>
+<nav class="space-y-2">
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showAccountSection(&#39;orders&#39;)" class="block text-sm hover:text-blue-600 py-1">Your Orders</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showAccountSection(&#39;security&#39;)" class="block text-sm hover:text-blue-600 py-1">Login &amp; Security</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showAccountSection(&#39;prime&#39;)" class="block text-sm hover:text-blue-600 py-1">Prime Membership</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showAccountSection(&#39;addresses&#39;)" class="block text-sm hover:text-blue-600 py-1">Your Addresses</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showAccountSection(&#39;payments&#39;)" class="block text-sm hover:text-blue-600 py-1">Payment Options</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showAccountSection(&#39;lists&#39;)" class="block text-sm hover:text-blue-600 py-1">Your Lists</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showAccountSection(&#39;gift-cards&#39;)" class="block text-sm hover:text-blue-600 py-1">Gift Cards</a>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showAccountSection(&#39;settings&#39;)" class="block text-sm hover:text-blue-600 py-1">Account Settings</a>
+</nav>
+</div>
+<div class="lg:col-span-3">
+<div id="accountContent" class="account-content">
+<div id="ordersSection" class="account-section">
+<h2 class="text-2xl font-bold mb-6">Your Orders</h2>
+<div class="space-y-4">
+<div class="order-item">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="font-semibold">Order #123-4567890-1234567</h4>
+<p class="text-sm text-gray-600">Placed on January 15, 2025</p>
+</div>
+<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">Delivered</span>
+</div>
+<div class="flex items-center space-x-4">
+<img src="https://readdy.ai/api/search-image?query=Wireless%20headphones%20modern%20black%20technology%20product%20photography%20clean%20background&amp;width=80&amp;height=80&amp;seq=order001&amp;orientation=squarish" alt="Product" class="w-16 h-16 object-cover rounded">
+<div>
+<p class="font-medium">Wireless Bluetooth Headphones</p>
+<p class="text-sm text-gray-600">$49.99</p>
+</div>
+</div>
+<div class="mt-3 flex space-x-3">
+<button class="btn-secondary text-sm !rounded-button whitespace-nowrap">Buy Again</button>
+<button class="btn-secondary text-sm !rounded-button whitespace-nowrap">Track Package</button>
+<button class="btn-secondary text-sm !rounded-button whitespace-nowrap">Return Item</button>
+</div>
+</div>
+<div class="order-item">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="font-semibold">Order #123-4567890-1234568</h4>
+<p class="text-sm text-gray-600">Placed on January 10, 2025</p>
+</div>
+<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">Shipped</span>
+</div>
+<div class="flex items-center space-x-4">
+<img src="https://readdy.ai/api/search-image?query=Fitness%20smartwatch%20modern%20wearable%20technology%20product%20photography%20clean%20background&amp;width=80&amp;height=80&amp;seq=order002&amp;orientation=squarish" alt="Product" class="w-16 h-16 object-cover rounded">
+<div>
+<p class="font-medium">Fitness Tracking Smartwatch</p>
+<p class="text-sm text-gray-600">$79.99</p>
+</div>
+</div>
+<div class="mt-3 flex space-x-3">
+<button class="btn-secondary text-sm !rounded-button whitespace-nowrap">Track Package</button>
+<button class="btn-secondary text-sm !rounded-button whitespace-nowrap">Cancel Order</button>
+</div>
+</div>
+</div>
+</div>
+<div id="securitySection" class="account-section" style="display: none;">
+<h2 class="text-2xl font-bold mb-6">Login &amp; Security</h2>
+<div class="space-y-6">
+<div class="border border-gray-200 rounded-lg p-4">
+<div class="flex justify-between items-center">
+<div>
+<h4 class="font-semibold">Name</h4>
+<p class="text-gray-600" id="accountName">John Doe</p>
+</div>
+<button class="btn-secondary text-sm !rounded-button whitespace-nowrap">Edit</button>
+</div>
+</div>
+<div class="border border-gray-200 rounded-lg p-4">
+<div class="flex justify-between items-center">
+<div>
+<h4 class="font-semibold">Email</h4>
+<p class="text-gray-600" id="accountEmail">john@example.com</p>
+</div>
+<button class="btn-secondary text-sm !rounded-button whitespace-nowrap">Edit</button>
+</div>
+</div>
+<div class="border border-gray-200 rounded-lg p-4">
+<div class="flex justify-between items-center">
+<div>
+<h4 class="font-semibold">Password</h4>
+<p class="text-gray-600">••••••••</p>
+</div>
+<button class="btn-secondary text-sm !rounded-button whitespace-nowrap">Change</button>
+</div>
+</div>
+<div class="border border-gray-200 rounded-lg p-4">
+<div class="flex justify-between items-center">
+<div>
+<h4 class="font-semibold">Two-Step Verification</h4>
+<p class="text-gray-600">Not enabled</p>
+</div>
+<button class="btn-primary text-sm !rounded-button whitespace-nowrap">Turn On</button>
+</div>
+</div>
+</div>
+</div>
+<div id="primeSection" class="account-section" style="display: none;">
+<h2 class="text-2xl font-bold mb-6">Prime Membership</h2>
+<div class="bg-blue-100 border border-blue-300 rounded-lg p-6 mb-6">
+<h3 class="text-xl font-bold text-blue-800 mb-2">Join Prime Today</h3>
+<p class="text-blue-700 mb-4">Get FREE fast shipping, streaming, and more benefits</p>
+<button class="btn-primary !rounded-button whitespace-nowrap">Start Your Prime Trial</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-white border border-gray-200 rounded-lg p-4">
+<h4 class="font-semibold mb-2">FREE Fast Shipping</h4>
+<p class="text-gray-600 text-sm">Get FREE One-Day, Two-Day, and Same-Day delivery</p>
+</div>
+<div class="bg-white border border-gray-200 rounded-lg p-4">
+<h4 class="font-semibold mb-2">Prime Video</h4>
+<p class="text-gray-600 text-sm">Stream thousands of movies and TV shows</p>
+</div>
+<div class="bg-white border border-gray-200 rounded-lg p-4">
+<h4 class="font-semibold mb-2">Prime Music</h4>
+<p class="text-gray-600 text-sm">Listen to millions of songs ad-free</p>
+</div>
+<div class="bg-white border border-gray-200 rounded-lg p-4">
+<h4 class="font-semibold mb-2">Prime Reading</h4>
+<p class="text-gray-600 text-sm">Read thousands of books and magazines</p>
+</div>
+</div>
+</div>
+<div id="addressesSection" class="account-section" style="display: none;">
+<h2 class="text-2xl font-bold mb-6">Your Addresses</h2>
+<button class="btn-primary mb-6 !rounded-button whitespace-nowrap">Add New Address</button>
+<div class="space-y-4">
+<div class="border border-gray-200 rounded-lg p-4">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-semibold mb-1">Home</h4>
+<p class="text-gray-600 text-sm">John Doe</p>
+<p class="text-gray-600 text-sm">123 Main Street</p>
+<p class="text-gray-600 text-sm">New York, NY 10001</p>
+<p class="text-gray-600 text-sm">United States</p>
+</div>
+<div class="flex space-x-2">
+<button class="btn-secondary text-sm !rounded-button whitespace-nowrap">Edit</button>
+<button class="btn-secondary text-sm !rounded-button whitespace-nowrap">Delete</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="paymentsSection" class="account-section" style="display: none;">
+<h2 class="text-2xl font-bold mb-6">Payment Options</h2>
+<button class="btn-primary mb-6 !rounded-button whitespace-nowrap">Add Payment Method</button>
+<div class="space-y-4">
+<div class="border border-gray-200 rounded-lg p-4">
+<div class="flex justify-between items-center">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded">
+<i class="ri-bank-card-line text-blue-600"></i>
+</div>
+<div>
+<h4 class="font-semibold">•••• •••• •••• 1234</h4>
+<p class="text-gray-600 text-sm">Expires 12/26</p>
+</div>
+</div>
+<div class="flex space-x-2">
+<button class="btn-secondary text-sm !rounded-button whitespace-nowrap">Edit</button>
+<button class="btn-secondary text-sm !rounded-button whitespace-nowrap">Remove</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="listsSection" class="account-section" style="display: none;">
+<h2 class="text-2xl font-bold mb-6">Your Lists</h2>
+<button class="btn-primary mb-6 !rounded-button whitespace-nowrap">Create New List</button>
+<div class="space-y-4">
+<div class="border border-gray-200 rounded-lg p-4">
+<h4 class="font-semibold mb-2">Wish List</h4>
+<p class="text-gray-600 text-sm mb-3">5 items • Created January 1, 2025</p>
+<div class="flex space-x-2">
+<button class="btn-secondary text-sm !rounded-button whitespace-nowrap">View List</button>
+<button class="btn-secondary text-sm !rounded-button whitespace-nowrap">Share</button>
+</div>
+</div>
+<div class="border border-gray-200 rounded-lg p-4">
+<h4 class="font-semibold mb-2">Shopping List</h4>
+<p class="text-gray-600 text-sm mb-3">12 items • Created December 15, 2024</p>
+<div class="flex space-x-2">
+<button class="btn-secondary text-sm !rounded-button whitespace-nowrap">View List</button>
+<button class="btn-secondary text-sm !rounded-button whitespace-nowrap">Share</button>
+</div>
+</div>
+</div>
+</div>
+<div id="giftCardsSection" class="account-section" style="display: none;">
+<h2 class="text-2xl font-bold mb-6">Gift Cards</h2>
+<div class="bg-green-100 border border-green-300 rounded-lg p-4 mb-6">
+<h3 class="font-semibold text-green-800 mb-2">Gift Card Balance</h3>
+<p class="text-2xl font-bold text-green-600">$25.00</p>
+</div>
+<button class="btn-primary mb-6 !rounded-button whitespace-nowrap">Redeem Gift Card</button>
+<div class="space-y-4">
+<h3 class="font-semibold">Gift Card Activity</h3>
+<div class="border border-gray-200 rounded-lg p-4">
+<div class="flex justify-between items-center">
+<div>
+<p class="font-medium">Gift Card Redeemed</p>
+<p class="text-gray-600 text-sm">January 1, 2025</p>
+</div>
+<span class="text-green-600 font-semibold">+$25.00</span>
+</div>
+</div>
+</div>
+</div>
+<div id="settingsSection" class="account-section" style="display: none;">
+<h2 class="text-2xl font-bold mb-6">Account Settings</h2>
+<div class="space-y-6">
+<div class="border border-gray-200 rounded-lg p-4">
+<h4 class="font-semibold mb-2">Communication Preferences</h4>
+<div class="space-y-3">
+<label class="flex items-center">
+<input type="checkbox" class="mr-2" checked="">
+<span class="text-sm">Email notifications about orders</span>
+</label>
+<label class="flex items-center">
+<input type="checkbox" class="mr-2" checked="">
+<span class="text-sm">Promotional emails</span>
+</label>
+<label class="flex items-center">
+<input type="checkbox" class="mr-2">
+<span class="text-sm">SMS notifications</span>
+</label>
+</div>
+</div>
+<div class="border border-gray-200 rounded-lg p-4">
+<h4 class="font-semibold mb-2">Privacy Settings</h4>
+<div class="space-y-3">
+<label class="flex items-center">
+<input type="checkbox" class="mr-2" checked="">
+<span class="text-sm">Personalized recommendations</span>
+</label>
+<label class="flex items-center">
+<input type="checkbox" class="mr-2">
+<span class="text-sm">Share purchase history for recommendations</span>
+</label>
+</div>
+</div>
+<div class="border border-gray-200 rounded-lg p-4">
+<h4 class="font-semibold mb-2 text-red-600">Danger Zone</h4>
+<p class="text-gray-600 text-sm mb-3">Permanently delete your account and all associated data</p>
+<button class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 text-sm">Delete Account</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Orders Page -->
+<div id="ordersPage" class="page-section">
+<div class="container mx-auto px-4 py-8">
+<h1 class="text-3xl font-bold mb-6">Your Orders</h1>
+<div class="bg-white rounded-lg shadow p-6">
+<div class="flex justify-between items-center mb-6">
+<div class="flex space-x-4">
+<button class="btn-primary !rounded-button whitespace-nowrap">All Orders</button>
+<button class="btn-secondary !rounded-button whitespace-nowrap">Not Yet Shipped</button>
+<button class="btn-secondary !rounded-button whitespace-nowrap">Cancelled Orders</button>
+</div>
+<div class="flex items-center space-x-2">
+<span class="text-sm">Search orders:</span>
+<input type="text" placeholder="Search your orders" class="border border-gray-300 rounded px-3 py-1 text-sm">
+</div>
+</div>
+<div class="space-y-6" id="ordersList">
+<!-- Orders will be populated here -->
+</div>
+</div>
+</div>
+</div>
+<!-- Lists Page -->
+<div id="listsPage" class="page-section">
+<div class="container mx-auto px-4 py-8">
+<h1 class="text-3xl font-bold mb-6">Your Lists</h1>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="bg-white rounded-lg shadow p-6">
+<h3 class="text-xl font-bold mb-4">Wish List</h3>
+<p class="text-gray-600 mb-4">5 items</p>
+<div class="space-y-3 mb-4">
+<div class="flex items-center space-x-3">
+<img src="https://readdy.ai/api/search-image?query=Wireless%20headphones%20modern%20technology%20product%20photography%20clean%20background&amp;width=60&amp;height=60&amp;seq=wishlist001&amp;orientation=squarish" alt="Product" class="w-12 h-12 object-cover rounded">
+<div class="flex-1">
+<p class="font-medium text-sm">Wireless Headphones</p>
+<p class="text-gray-600 text-xs">$49.99</p>
+</div>
+<button class="btn-primary text-xs !rounded-button whitespace-nowrap" onclick="addToCart(&#39;wireless-headphones&#39;, &#39;Wireless Headphones&#39;, 49.99)">Add to Cart</button>
+</div>
+<div class="flex items-center space-x-3">
+<img src="https://readdy.ai/api/search-image?query=Fitness%20smartwatch%20wearable%20technology%20product%20photography%20clean%20background&amp;width=60&amp;height=60&amp;seq=wishlist002&amp;orientation=squarish" alt="Product" class="w-12 h-12 object-cover rounded">
+<div class="flex-1">
+<p class="font-medium text-sm">Fitness Smartwatch</p>
+<p class="text-gray-600 text-xs">$79.99</p>
+</div>
+<button class="btn-primary text-xs !rounded-button whitespace-nowrap" onclick="addToCart(&#39;smartwatch&#39;, &#39;Fitness Smartwatch&#39;, 79.99)">Add to Cart</button>
+</div>
+</div>
+<button class="btn-secondary w-full text-sm !rounded-button whitespace-nowrap">View All Items</button>
+</div>
+<div class="bg-white rounded-lg shadow p-6">
+<h3 class="text-xl font-bold mb-4">Shopping List</h3>
+<p class="text-gray-600 mb-4">12 items</p>
+<div class="space-y-3 mb-4">
+<div class="flex items-center space-x-3">
+<img src="https://readdy.ai/api/search-image?query=Bluetooth%20speaker%20portable%20audio%20device%20product%20photography%20clean%20background&amp;width=60&amp;height=60&amp;seq=shopping001&amp;orientation=squarish" alt="Product" class="w-12 h-12 object-cover rounded">
+<div class="flex-1">
+<p class="font-medium text-sm">Bluetooth Speaker</p>
+<p class="text-gray-600 text-xs">$29.99</p>
+</div>
+<button class="btn-primary text-xs !rounded-button whitespace-nowrap" onclick="addToCart(&#39;bluetooth-speaker&#39;, &#39;Bluetooth Speaker&#39;, 29.99)">Add to Cart</button>
+</div>
+<div class="flex items-center space-x-3">
+<img src="https://readdy.ai/api/search-image?query=USB%20charging%20cable%20modern%20technology%20accessory%20product%20photography%20clean%20background&amp;width=60&amp;height=60&amp;seq=shopping002&amp;orientation=squarish" alt="Product" class="w-12 h-12 object-cover rounded">
+<div class="flex-1">
+<p class="font-medium text-sm">USB-C Cable</p>
+<p class="text-gray-600 text-xs">$12.99</p>
+</div>
+<button class="btn-primary text-xs !rounded-button whitespace-nowrap" onclick="addToCart(&#39;usb-cable&#39;, &#39;USB-C Cable&#39;, 12.99)">Add to Cart</button>
+</div>
+</div>
+<button class="btn-secondary w-full text-sm !rounded-button whitespace-nowrap">View All Items</button>
+</div>
+<div class="bg-white rounded-lg shadow p-6 border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-center">
+<div class="w-16 h-16 flex items-center justify-center mx-auto mb-4 bg-gray-100 rounded-full">
+<i class="ri-add-line text-2xl text-gray-600"></i>
+</div>
+<h3 class="font-bold mb-2">Create New List</h3>
+<p class="text-gray-600 text-sm mb-4">Organize your favorite items</p>
+<button class="btn-primary !rounded-button whitespace-nowrap" onclick="showCreateListModal()">Create List</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-secondary text-white mt-16">
+<div class="bg-gray-700 py-4">
+<div class="container mx-auto px-4 text-center">
+<button class="text-white hover:text-gray-300" onclick="window.scrollTo(0,0)">Back to top</button>
+</div>
+</div>
+<div class="container mx-auto px-4 py-12">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div>
+<h4 class="font-bold mb-4">Get to Know Us</h4>
+<ul class="space-y-2 text-sm">
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Careers</a></li>
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Blog</a></li>
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">About Amazon</a></li>
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Investor Relations</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold mb-4">Make Money with Us</h4>
+<ul class="space-y-2 text-sm">
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Sell products on Amazon</a></li>
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Sell on Amazon Business</a></li>
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Sell apps on Amazon</a></li>
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Become an Affiliate</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold mb-4">Amazon Payment Products</h4>
+<ul class="space-y-2 text-sm">
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Amazon Business Card</a></li>
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Shop with Points</a></li>
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Reload Your Balance</a></li>
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Amazon Currency Converter</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold mb-4">Let Us Help You</h4>
+<ul class="space-y-2 text-sm">
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Amazon and COVID-19</a></li>
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Your Account</a></li>
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Your Orders</a></li>
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Shipping Rates &amp; Policies</a></li>
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Returns &amp; Replacements</a></li>
+<li><a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="hover:text-gray-300">Help</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-600 py-6">
+<div class="container mx-auto px-4">
+<div class="flex flex-col md:flex-row items-center justify-between">
+<div class="flex items-center space-x-4 mb-4 md:mb-0">
+<span class="font-[&#39;Pacifico&#39;] text-xl">amazon</span>
+<select class="bg-gray-600 text-white px-3 py-1 rounded text-sm">
+<option>English</option>
+<option>Español</option>
+<option>Français</option>
+</select>
+<select class="bg-gray-600 text-white px-3 py-1 rounded text-sm">
+<option>USD - U.S. Dollar</option>
+<option>EUR - Euro</option>
+<option>GBP - British Pound</option>
+</select>
+<select class="bg-gray-600 text-white px-3 py-1 rounded text-sm">
+<option>United States</option>
+<option>Canada</option>
+<option>United Kingdom</option>
+</select>
+</div>
+<div class="flex items-center space-x-4 text-sm">
+<span>We accept:</span>
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-visa-fill text-lg"></i>
+</div>
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-mastercard-fill text-lg"></i>
+</div>
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-paypal-fill text-lg"></i>
+</div>
+</div>
+</div>
+<div class="text-center text-sm text-gray-400 mt-4">
+© 1996-2025, Amazon.com, Inc. or its affiliates
+</div>
+</div>
+</div>
+</footer>
+<!-- Modals -->
+<!-- Create List Modal -->
+<div id="createListModal" class="modal">
+<div class="modal-content">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-2xl font-bold">Create New List</h2>
+<button onclick="closeModal(&#39;createListModal&#39;)" class="text-gray-500 hover:text-gray-700">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-close-line"></i>
+</div>
+</button>
+</div>
+<form id="createListForm" onsubmit="createNewList(event)">
+<div class="mb-4">
+<label class="block text-sm font-medium mb-2" for="listName">List Name *</label>
+<input type="text" id="listName" class="w-full border border-gray-300 rounded px-3 py-2" required="" maxlength="50">
+</div>
+<div class="mb-4">
+<label class="block text-sm font-medium mb-2" for="listDescription">Description (optional)</label>
+<textarea id="listDescription" class="w-full border border-gray-300 rounded px-3 py-2" rows="3" maxlength="200"></textarea>
+<p class="text-xs text-gray-500 mt-1">Maximum 200 characters</p>
+</div>
+<div class="mb-6">
+<label class="block text-sm font-medium mb-2">Privacy Settings</label>
+<div class="space-y-2">
+<label class="flex items-center">
+<input type="radio" name="privacy" value="private" checked="" class="mr-2">
+<span class="text-sm">Private - Only you can see this list</span>
+</label>
+<label class="flex items-center">
+<input type="radio" name="privacy" value="public" class="mr-2">
+<span class="text-sm">Public - Anyone can see this list</span>
+</label>
+</div>
+</div>
+<button type="submit" class="btn-primary w-full !rounded-button whitespace-nowrap">Create List</button>
+</form>
+</div>
+</div>
+<!-- Sign In Modal -->
+<div id="signInModal" class="modal">
+<div class="modal-content">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-2xl font-bold">Sign In</h2>
+<button onclick="closeModal(&#39;signInModal&#39;)" class="text-gray-500 hover:text-gray-700">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-close-line"></i>
+</div>
+</button>
+</div>
+<form onsubmit="signIn(event)">
+<div class="mb-4">
+<label class="block text-sm font-medium mb-2">Email or mobile phone number</label>
+<input type="text" id="signInEmail" class="w-full border border-gray-300 rounded px-3 py-2" required="">
+</div>
+<div class="mb-4">
+<label class="block text-sm font-medium mb-2">Password</label>
+<input type="password" id="signInPassword" class="w-full border border-gray-300 rounded px-3 py-2" required="">
+</div>
+<button type="submit" class="btn-primary w-full mb-3 !rounded-button whitespace-nowrap">Sign In</button>
+<div class="text-center text-sm">
+<p class="mb-2">By continuing, you agree to Amazon's <a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="text-blue-600">Conditions of Use</a> and <a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="text-blue-600">Privacy Notice</a>.</p>
+<a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="text-blue-600">Need help?</a>
+</div>
+<hr class="my-4">
+<div class="text-center">
+<p class="text-sm mb-2">New to Amazon?</p>
+<button type="button" onclick="showSignUp()" class="btn-secondary w-full !rounded-button whitespace-nowrap">Create your Amazon account</button>
+</div>
+</form>
+</div>
+</div>
+<!-- Sign Up Modal -->
+<div id="signUpModal" class="modal">
+<div class="modal-content">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-2xl font-bold">Create Account</h2>
+<button onclick="closeModal(&#39;signUpModal&#39;)" class="text-gray-500 hover:text-gray-700">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-close-line"></i>
+</div>
+</button>
+</div>
+<form onsubmit="signUp(event)">
+<div class="mb-4">
+<label class="block text-sm font-medium mb-2">Your name</label>
+<input type="text" id="signUpName" class="w-full border border-gray-300 rounded px-3 py-2" required="">
+</div>
+<div class="mb-4">
+<label class="block text-sm font-medium mb-2">Email</label>
+<input type="email" id="signUpEmail" class="w-full border border-gray-300 rounded px-3 py-2" required="">
+</div>
+<div class="mb-4">
+<label class="block text-sm font-medium mb-2">Password</label>
+<input type="password" id="signUpPassword" class="w-full border border-gray-300 rounded px-3 py-2" required="">
+<p class="text-xs text-gray-600 mt-1">Passwords must be at least 6 characters.</p>
+</div>
+<div class="mb-4">
+<label class="block text-sm font-medium mb-2">Re-enter password</label>
+<input type="password" id="signUpPasswordConfirm" class="w-full border border-gray-300 rounded px-3 py-2" required="">
+</div>
+<button type="submit" class="btn-primary w-full mb-3 !rounded-button whitespace-nowrap">Create your Amazon account</button>
+<div class="text-center text-sm">
+<p class="mb-2">By creating an account, you agree to Amazon's <a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="text-blue-600">Conditions of Use</a> and <a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" class="text-blue-600">Privacy Notice</a>.</p>
+<p>Already have an account? <a href="https://readdy.ai/home/e33fbe05-ce65-48b3-ad65-5b6dc7551218/21b58e01-d134-47ed-8913-e6987497d191#" onclick="showSignIn()" class="text-blue-600">Sign in</a></p>
+</div>
+</form>
+</div>
+</div>
+<script id="sliderScript">
+let currentSlide = 0;
+const totalSlides = 6;
+function nextSlide() {
+currentSlide = (currentSlide + 1) % totalSlides;
+updateSlider();
+}
+function prevSlide() {
+currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+updateSlider();
+}
+function updateSlider() {
+const track = document.getElementById('sliderTrack');
+track.style.transform = `translateX(-${currentSlide * 100}%)`;
+}
+document.addEventListener('DOMContentLoaded', function() {
+setInterval(nextSlide, 5000);
+});
+</script>
+<script id="authScript">
+let currentUser = null;
+function showSignIn() {
+closeModal('signUpModal');
+document.getElementById('signInModal').style.display = 'block';
+}
+function showSignUp() {
+closeModal('signInModal');
+document.getElementById('signUpModal').style.display = 'block';
+}
+function closeModal(modalId) {
+document.getElementById(modalId).style.display = 'none';
+}
+function signIn(event) {
+event.preventDefault();
+const email = document.getElementById('signInEmail').value;
+const password = document.getElementById('signInPassword').value;
+if (email && password) {
+currentUser = {
+name: email.split('@')[0],
+email: email
+};
+updateUserInterface();
+closeModal('signInModal');
+showToast('Successfully signed in!');
+}
+}
+function signUp(event) {
+event.preventDefault();
+const name = document.getElementById('signUpName').value;
+const email = document.getElementById('signUpEmail').value;
+const password = document.getElementById('signUpPassword').value;
+const confirmPassword = document.getElementById('signUpPasswordConfirm').value;
+if (password !== confirmPassword) {
+showToast('Passwords do not match!', 'error');
+return;
+}
+if (name && email && password) {
+currentUser = {
+name: name,
+email: email
+};
+updateUserInterface();
+closeModal('signUpModal');
+showToast('Account created successfully!');
+}
+}
+function updateUserInterface() {
+if (currentUser) {
+document.getElementById('userGreeting').textContent = `Hello, ${currentUser.name}`;
+document.getElementById('accountName').textContent = currentUser.name;
+document.getElementById('accountEmail').textContent = currentUser.email;
+const accountDropdown = document.getElementById('accountDropdown');
+accountDropdown.innerHTML = `
+<div class="p-4">
+<p class="font-semibold mb-2">Welcome, ${currentUser.name}!</p>
+<button class="btn-secondary w-full mb-2 !rounded-button whitespace-nowrap" onclick="signOut()">Sign Out</button>
+<div class="border-t pt-3">
+<h4 class="font-semibold mb-2">Your Account</h4>
+<a href="#" onclick="showPage('account')" class="block text-sm text-gray-700 hover:text-blue-600 py-1">Your Account</a>
+<a href="#" onclick="showPage('orders')" class="block text-sm text-gray-700 hover:text-blue-600 py-1">Your Orders</a>
+<a href="#" onclick="showPage('lists')" class="block text-sm text-gray-700 hover:text-blue-600 py-1">Your Lists</a>
+</div>
+</div>
+`;
+}
+}
+function signOut() {
+currentUser = null;
+document.getElementById('userGreeting').textContent = 'Hello, sign in';
+document.getElementById('accountDropdown').innerHTML = `
+<div class="p-4">
+<button class="btn-primary w-full mb-2 !rounded-button whitespace-nowrap" onclick="showSignIn()">Sign In</button>
+<p class="text-sm text-gray-600 mb-3">New customer? <a href="#" onclick="showSignUp()" class="text-blue-600">Start here</a></p>
+<div class="border-t pt-3">
+<h4 class="font-semibold mb-2">Your Account</h4>
+<a href="#" onclick="showPage('account')" class="block text-sm text-gray-700 hover:text-blue-600 py-1">Your Account</a>
+<a href="#" onclick="showPage('orders')" class="block text-sm text-gray-700 hover:text-blue-600 py-1">Your Orders</a>
+<a href="#" onclick="showPage('lists')" class="block text-sm text-gray-700 hover:text-blue-600 py-1">Your Lists</a>
+</div>
+</div>
+`;
+showToast('Successfully signed out!');
+}
+</script>
+<script id="cartScript">
+let cart = [];
+function addToCart(id, name, price) {
+const existingItem = cart.find(item => item.id === id);
+if (existingItem) {
+existingItem.quantity += 1;
+} else {
+cart.push({
+id: id,
+name: name,
+price: price,
+quantity: 1
+});
+}
+updateCartUI();
+showToast(`${name} added to cart!`);
+}
+function removeFromCart(id) {
+cart = cart.filter(item => item.id !== id);
+updateCartUI();
+showToast('Item removed from cart!');
+}
+function updateQuantity(id, quantity) {
+const item = cart.find(item => item.id === id);
+if (item) {
+item.quantity = Math.max(0, quantity);
+if (item.quantity === 0) {
+removeFromCart(id);
+} else {
+updateCartUI();
+}
+}
+}
+function updateCartUI() {
+const cartCount = document.getElementById('cartCount');
+const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+cartCount.textContent = totalItems;
+const cartItems = document.getElementById('cartItems');
+const subtotal = document.getElementById('subtotal');
+const shipping = document.getElementById('shipping');
+const tax = document.getElementById('tax');
+const total = document.getElementById('total');
+if (cart.length === 0) {
+cartItems.innerHTML = '<p class="text-gray-600">Your cart is empty</p>';
+subtotal.textContent = '$0.00';
+shipping.textContent = '$0.00';
+tax.textContent = '$0.00';
+total.textContent = '$0.00';
+return;
+}
+const subtotalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+const shippingAmount = subtotalAmount > 25 ? 0 : 5.99;
+const taxAmount = subtotalAmount * 0.08;
+const totalAmount = subtotalAmount + shippingAmount + taxAmount;
+cartItems.innerHTML = cart.map(item => `
+<div class="flex items-center justify-between border-b pb-4 mb-4">
+<div class="flex items-center space-x-4">
+<img src="https://readdy.ai/api/search-image?query=$%7Bitem.name%7D%20product%20photography%20clean%20background&width=80&height=80&seq=cart${item.id}&orientation=squarish" alt="${item.name}" class="w-16 h-16 object-cover rounded">
+<div>
+<h4 class="font-semibold">${item.name}</h4>
+<p class="text-gray-600">$${item.price.toFixed(2)}</p>
+<div class="flex items-center space-x-2 mt-2">
+<button onclick="updateQuantity('${item.id}', ${item.quantity - 1})" class="btn-secondary text-sm !rounded-button whitespace-nowrap">-</button>
+<span class="px-3">${item.quantity}</span>
+<button onclick="updateQuantity('${item.id}', ${item.quantity + 1})" class="btn-secondary text-sm !rounded-button whitespace-nowrap">+</button>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="font-semibold">$${(item.price * item.quantity).toFixed(2)}</p>
+<button onclick="removeFromCart('${item.id}')" class="text-red-600 text-sm hover:underline mt-2">Delete</button>
+</div>
+</div>
+`).join('');
+subtotal.textContent = `$${subtotalAmount.toFixed(2)}`;
+shipping.textContent = `$${shippingAmount.toFixed(2)}`;
+tax.textContent = `$${taxAmount.toFixed(2)}`;
+total.textContent = `$${totalAmount.toFixed(2)}`;
+}
+function checkout() {
+if (cart.length === 0) {
+showToast('Your cart is empty!', 'error');
+return;
+}
+if (!currentUser) {
+showToast('Please sign in to checkout', 'error');
+showSignIn();
+return;
+}
+cart = [];
+updateCartUI();
+showToast('Order placed successfully!');
+showPage('orders');
+}
+</script>
+<script id="navigationScript">
+let userLists = [];
+
+function showCreateListModal() {
+  document.getElementById('createListModal').style.display = 'block';
+}
+
+function createNewList(event) {
+  event.preventDefault();
+  
+  const listName = document.getElementById('listName').value;
+  const listDescription = document.getElementById('listDescription').value;
+  const privacy = document.querySelector('input[name="privacy"]:checked').value;
+  
+  const newList = {
+    id: 'list-' + Date.now(),
+    name: listName,
+    description: listDescription,
+    privacy: privacy,
+    items: [],
+    createdAt: new Date().toISOString()
+  };
+  
+  userLists.push(newList);
+  closeModal('createListModal');
+  showToast('List created successfully!');
+  
+  // Reset form
+  document.getElementById('createListForm').reset();
+  
+  // Refresh lists page if currently viewing it
+  if (document.getElementById('listsPage').classList.contains('active')) {
+    showPage('lists');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+const allCategoriesDropdown = document.getElementById('allCategoriesDropdown');
+const categoriesMenu = document.getElementById('categoriesMenu');
+allCategoriesDropdown.addEventListener('click', function(e) {
+e.stopPropagation();
+const isVisible = categoriesMenu.classList.contains('block');
+if (isVisible) {
+categoriesMenu.classList.remove('block');
+categoriesMenu.classList.add('hidden');
+} else {
+categoriesMenu.classList.remove('hidden');
+categoriesMenu.classList.add('block');
+}
+});
+document.addEventListener('click', function(e) {
+if (!allCategoriesDropdown.contains(e.target)) {
+categoriesMenu.classList.remove('block');
+categoriesMenu.classList.add('hidden');
+}
+});
+const categoryItems = document.querySelectorAll('.category-item');
+categoryItems.forEach(item => {
+const submenu = item.querySelector('.absolute');
+item.addEventListener('mouseenter', () => {
+const rect = item.getBoundingClientRect();
+if (rect.top + submenu.offsetHeight > window.innerHeight) {
+submenu.style.top = `${window.innerHeight - rect.top - submenu.offsetHeight}px`;
+} else {
+submenu.style.top = '0';
+}
+});
+});
+});
+function showPage(pageId) {
+document.querySelectorAll('.page-section').forEach(section => {
+section.classList.remove('active');
+});
+const targetPage = document.getElementById(pageId + 'Page') || document.getElementById('homePage');
+targetPage.classList.add('active');
+if (pageId === 'orders') {
+loadOrders();
+}
+}
+function showAccountSection(sectionId) {
+document.querySelectorAll('.account-section').forEach(section => {
+section.style.display = 'none';
+});
+document.getElementById(sectionId + 'Section').style.display = 'block';
+}
+function performSearch() {
+const searchTerm = document.getElementById('searchInput').value;
+if (searchTerm) {
+showToast(`Searching for: ${searchTerm}`);
+}
+}
+function showToast(message, type = 'success') {
+const toast = document.getElementById('toast');
+toast.textContent = message;
+toast.className = `toast ${type === 'error' ? 'bg-red-500' : 'bg-green-500'}`;
+toast.style.display = 'block';
+setTimeout(() => {
+toast.style.display = 'none';
+}, 3000);
+}
+function loadOrders() {
+const ordersList = document.getElementById('ordersList');
+if (ordersList) {
+ordersList.innerHTML = `
+<div class="border border-gray-200 rounded-lg p-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-bold text-lg">Order #123-4567890-1234567</h3>
+<p class="text-gray-600">Placed on January 15, 2025</p>
+<p class="text-gray-600">Total: $49.99</p>
+</div>
+<span class="bg-green-100 text-green-800 px-3 py-1 rounded">Delivered</span>
+</div>
+<div class="flex items-center space-x-4 mb-4">
+<img src="https://readdy.ai/api/search-image?query=Wireless%20headphones%20modern%20technology%20product%20photography%20clean%20background&width=80&height=80&seq=orderitem001&orientation=squarish" alt="Product" class="w-16 h-16 object-cover rounded">
+<div>
+<h4 class="font-semibold">Wireless Bluetooth Headphones</h4>
+<p class="text-gray-600">Quantity: 1</p>
+</div>
+</div>
+<div class="flex space-x-3">
+<button class="btn-secondary !rounded-button whitespace-nowrap" onclick="addToCart('wireless-headphones', 'Wireless Headphones', 49.99)">Buy Again</button>
+<button class="btn-secondary !rounded-button whitespace-nowrap">Track Package</button>
+<button class="btn-secondary !rounded-button whitespace-nowrap">Return Item</button>
+<button class="btn-secondary !rounded-button whitespace-nowrap">Write Review</button>
+</div>
+</div>
+<div class="border border-gray-200 rounded-lg p-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-bold text-lg">Order #123-4567890-1234568</h3>
+<p class="text-gray-600">Placed on January 10, 2025</p>
+<p class="text-gray-600">Total: $79.99</p>
+</div>
+<span class="bg-blue-100 text-blue-800 px-3 py-1 rounded">Shipped</span>
+</div>
+<div class="flex items-center space-x-4 mb-4">
+<img src="https://readdy.ai/api/search-image?query=Fitness%20smartwatch%20wearable%20technology%20product%20photography%20clean%20background&width=80&height=80&seq=orderitem002&orientation=squarish" alt="Product" class="w-16 h-16 object-cover rounded">
+<div>
+<h4 class="font-semibold">Fitness Tracking Smartwatch</h4>
+<p class="text-gray-600">Quantity: 1</p>
+</div>
+</div>
+<div class="flex space-x-3">
+<button class="btn-secondary !rounded-button whitespace-nowrap">Track Package</button>
+<button class="btn-secondary !rounded-button whitespace-nowrap">Cancel Order</button>
+</div>
+</div>
+`;
+}
+}
+</script>
+<script id="productsScript">
+document.addEventListener('DOMContentLoaded', function() {
+loadFeaturedProducts();
+});
+function loadFeaturedProducts() {
+const products = [
+{
+id: 'laptop-pro',
+name: 'Professional Laptop',
+price: 899.99,
+rating: 4.5,
+reviews: 1234,
+image: 'Modern laptop computer professional sleek design technology product photography clean background'
+},
+{
+id: 'smartphone-x',
+name: 'Smartphone X',
+price: 699.99,
+rating: 4.7,
+reviews: 2456,
+image: 'Modern smartphone mobile phone technology device product photography clean background'
+},
+{
+id: 'coffee-maker',
+name: 'Premium Coffee Maker',
+price: 149.99,
+rating: 4.3,
+reviews: 567,
+image: 'Coffee maker machine kitchen appliance modern design product photography clean background'
+},
+{
+id: 'running-shoes',
+name: 'Athletic Running Shoes',
+price: 89.99,
+rating: 4.6,
+reviews: 890,
+image: 'Athletic running shoes sports footwear modern design product photography clean background'
+},
+{
+id: 'tablet-air',
+name: 'Tablet Air',
+price: 329.99,
+rating: 4.4,
+reviews: 1567,
+image: 'Tablet computer modern technology device sleek design product photography clean background'
+},
+{
+id: 'wireless-mouse',
+name: 'Wireless Gaming Mouse',
+price: 59.99,
+rating: 4.2,
+reviews: 234,
+image: 'Wireless gaming mouse computer accessory modern technology product photography clean background'
+},
+{
+id: 'desk-lamp',
+name: 'LED Desk Lamp',
+price: 39.99,
+rating: 4.1,
+reviews: 345,
+image: 'LED desk lamp modern lighting fixture office accessory product photography clean background'
+},
+{
+id: 'backpack-travel',
+name: 'Travel Backpack',
+price: 79.99,
+rating: 4.8,
+reviews: 678,
+image: 'Travel backpack modern luggage bag outdoor gear product photography clean background'
+}
+];
+const productsGrid = document.getElementById('productsGrid');
+if (productsGrid) {
+productsGrid.innerHTML = products.map(product => `
+<div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition-all duration-300">
+<img src="https://readdy.ai/api/search-image?query=$%7Bproduct.image%7D&width=250&height=200&seq=${product.id}&orientation=landscape" alt="${product.name}" class="w-full h-48 object-cover">
+<div class="p-4">
+<h3 class="font-semibold text-lg mb-2">${product.name}</h3>
+<div class="flex items-center mb-2">
+<div class="star-rating mr-2">
+${'★'.repeat(Math.floor(product.rating))}${'☆'.repeat(5 - Math.floor(product.rating))}
+</div>
+<span class="text-sm text-gray-600">(${product.reviews})</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xl font-bold text-green-600">$${product.price}</span>
+<button class="btn-primary !rounded-button whitespace-nowrap" onclick="addToCart('${product.id}', '${product.name}', ${product.price})">Add to Cart</button>
+</div>
+</div>
+</div>
+`).join('');
+}
+}
+</script>
+<script id="modalScript">
+document.addEventListener('DOMContentLoaded', function() {
+window.onclick = function(event) {
+const modals = document.querySelectorAll('.modal');
+modals.forEach(modal => {
+if (event.target === modal) {
+modal.style.display = 'none';
+}
+});
+};
+});
+</script>
+
+<script>
+      (function () {
+  'use strict';
+
+  const originalWindowOpen = window.originalWindowOpen ?? window.open;
+
+  function processAnchor(url) {
+    // 查找锚点，平滑滚动
+    const anchor = document.querySelector(url);
+    if (anchor) {
+      anchor.scrollIntoView({ behavior: 'smooth' });
+    }
+    // 发送 hashchange 事件
+    const event = new Event('hashchange');
+    event.newURL = url;
+    event.oldURL = window.location.href;
+    // 因为预览 iframe 没有 url，所以需要手动设置
+    window.location.hash = url;
+    window.dispatchEvent(event);
+  }
+
+  // 重写 window.open
+  window.open = function (url, target, features) {
+    if (url.startsWith('#')) {
+      // 查找锚点，平滑滚动
+      processAnchor(url);
+      return;
+    }
+    originalWindowOpen(url, '_blank', features);
+    return null;
+  };
+})();
+
+      
+  window.addEventListener('click', (event) => {
+    const target = event.target;
+    const closest = target.closest('a');
+    if (!closest) return;
+    if (closest.tagName === 'A') {
+      event.preventDefault();
+      const href = closest.getAttribute('href');
+      if (!href) return;
+      // check is void link
+      if (['#', 'javascript:void(0)', ''].includes(href)) {
+        return;
+      }
+      // 锚点链接也不处理
+      if (href.startsWith('#')) {
+        return;
+      }
+      window.open(closest.href, '_blank');
+    }
+  });
+
+      
+  document.addEventListener('submit', (event) => {
+    event.preventDefault();
+  }, true);
+
+    </script><design-editor-button style="display: none; z-index: 2147483647; position: fixed;"><template shadowrootmode="open"><style id="design-editor-button-style">
+      .design-editor-button-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px;
+        color: rgba(0, 0, 0, 0.85);
+        border: 1px solid #E9ECF0;
+        background-color: #FAFAFA;/* #FAFAFA */
+        border-radius: 10px;
+        box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.15);
+      }
+      .design-editor-button-item {
+        cursor: pointer;
+        display: flex;    
+        align-items: center;
+        gap: 6px;
+        padding: 6px;
+        border-radius: 6px;
+      }
+      .design-editor-button-item:hover {
+        background-color: rgba(0, 0, 0, 0.08);
+      }
+      .button-divider {
+        width: 1px;
+        height: 20px;
+        background-color: #DADEE5;
+      }
+    </style><div class="design-editor-button-wrapper"><div></div></div></template></design-editor-button></body></html>

@@ -1,0 +1,5 @@
+student_id,course_code,course_name,semester,academic_year,grade,credits,score
+IPMC2024001,CS101,Introduction to Programming,Semester 1,2024/2025,A,3,92
+IPMC2024001,CS102,Web Development Fundamentals,Semester 1,2024/2025,B+,3,85
+IPMC2024002,CS101,Introduction to Programming,Semester 1,2024/2025,B,3,78
+IPMC2024002,CS103,Database Management,Semester 2,2024/2025,A-,3,88

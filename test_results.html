@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Results API</title>
+</head>
+<body>
+    <h2>Test Results API</h2>
+    
+    <div>
+        <label>Enter Student ID:</label>
+        <input type="text" id="studentId" placeholder="e.g., IPMC2024001">
+        <button onclick="testAPI()">Test API</button>
+    </div>
+    
+    <div id="result" style="margin-top: 20px; padding: 10px; background: #f0f0f0;"></div>
+    
+    <script src="frontend-config.js"></script>
+    <script>
+        async function testAPI() {
+            const studentId = document.getElementById('studentId').value;
+            const resultDiv = document.getElementById('result');
+            
+            if (!studentId) {
+                resultDiv.innerHTML = 'Please enter a Student ID';
+                return;
+            }
+            
+            resultDiv.innerHTML = 'Loading...';
+            
+            try {
+                const response = await fetch(window.IPMC_CONFIG.apiUrl(`get_student_results.php?student_id=${studentId}`), {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <h3>API Response:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                    <hr>
+                    <h3>Results Count: ${data.results ? data.results.length : 0}</h3>
+                    ${data.results && data.results.length > 0 ? 
+                        '<h3 style="color: green;">✓ Results found in database!</h3>' : 
+                        '<h3 style="color: red;">✗ No results found for this student</h3>'
+                    }
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

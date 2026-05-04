@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPMC - Contact Us</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="images/University College Logo.png" alt="IPMC Logo">
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="explore.html" class="nav-link">Explore Programmes</a></li>
+                    <li><a href="career.html" class="nav-link">Career Support</a></li>
+                    <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+                    <li><a href="about.html" class="nav-link">About Us</a></li>
+                    <li><a href="contact.html" class="nav-link active">Contact Us</a></li>
+                    <li><a href="grievance.html" class="nav-link grievance-btn">Grievance Portal</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Banner -->
+    <section class="banner">
+        <img src="https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=1600&h=600&fit=crop" alt="Contact Us">
+        <div class="banner-content">
+            <h1>Contact IPMC</h1>
+            <p>Get in touch with us to start your technology education journey</p>
+            <a href="#contact-form" class="btn-primary">Get Started</a>
+        </div>
+    </section>
+
+    <!-- Content -->
+    <section class="content">
+        <div class="container">
+            <div class="text-center mb-20">
+                <h2>Get In Touch</h2>
+                <p>Ready to transform your career with technology education? Contact us today to learn more about our programs and how we can help you achieve your goals.</p>
+            </div>
+
+            <!-- Contact Form -->
+            <div id="contact-form" class="contact-form">
+                <h3 style="text-align: center; margin-bottom: 30px;">Send Us a Message</h3>
+                <form id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="program">Program of Interest</label>
+                        <select id="program" name="program">
+                            <option value="">Select a program</option>
+                            <option value="career-dome">Career Dome Programs</option>
+                            <option value="university">University Programmes</option>
+                            <option value="certification">Certification Programs</option>
+                            <option value="short-courses">Short Courses</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="campus">Preferred Campus</label>
+                        <select id="campus" name="campus">
+                            <option value="">Select a campus</option>
+                            <option value="circle">Circle - Kwame Nkrumah Avenue</option>
+                            <option value="shiashie">Shiashie - East Legon</option>
+                            <option value="north-legon">North Legon</option>
+                            <option value="kumasi">Kumasi</option>
+                            <option value="tema-25">Tema Community-25</option>
+                            <option value="takoradi">Takoradi</option>
+                            <option value="dansoman">Dansoman</option>
+                            <option value="tema-6">Tema Community-6</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" placeholder="Tell us about your goals and how we can help you..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" required style="margin-right: 10px;">
+                            I agree to receive communications from IPMC about programs and services.
+                        </label>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn-primary">Send Message</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Contact Information -->
+            <div style="margin: 80px 0;">
+                <h3 style="text-align: center; margin-bottom: 40px;">Contact Information</h3>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-phone"></i>
+                        <h4>Phone</h4>
+                        <p>+233 XXX XXX XXX<br>+233 XXX XXX XXX</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <i class="fas fa-envelope"></i>
+                        <h4>Email</h4>
+                        <p>info@ipmc.edu.gh<br>admissions@ipmc.edu.gh</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <i class="fas fa-clock"></i>
+                        <h4>Office Hours</h4>
+                        <p>Monday - Friday: 8:00 AM - 6:00 PM<br>Saturday: 9:00 AM - 4:00 PM</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <i class="fas fa-globe"></i>
+                        <h4>Website</h4>
+                        <p>www.ipmc.edu.gh<br>Follow us on social media</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch Locations -->
+            <div>
+                <h3 style="text-align: center; margin-bottom: 40px;">Our Campus Locations</h3>
+                <p style="text-align: center; margin-bottom: 50px; color: var(--gray);">Visit any of our eight convenient locations across Ghana. Hover over each location for detailed address information.</p>
+                
+                <div class="branches-grid">
+                    <div class="branch-card">
+                        <img src="images/shiashie.jpg" alt="Circle Campus" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;">
+                        <h4><i class="fas fa-map-marker-alt" style="color: var(--primary-color); margin-right: 8px;"></i>Circle Campus</h4>
+                        <p>Main Campus - Accra</p>
+                        <div class="location-details">
+                            <strong>Full Address:</strong><br>
+                            P.O.Box GP 2066<br>
+                            Kwame Nkrumah Avenue<br>
+                            Accra, Ghana<br><br>
+                            <strong>Facilities:</strong><br>
+                            • Main Administrative Office<br>
+                            • Advanced Computer Labs<br>
+                            • Library & Study Areas<br>
+                            • Student Services Center
+                        </div>
+                    </div>
+                    
+                    <div class="branch-card">
+                        <img src="images/shiashie m.jpg" alt="Shiashie Campus" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;">
+                        <h4><i class="fas fa-map-marker-alt" style="color: var(--primary-color); margin-right: 8px;"></i>Shiashie Campus</h4>
+                        <p>East Legon - Accra</p>
+                        <div class="location-details">
+                            <strong>Full Address:</strong><br>
+                            Shiashie GA-297-9289<br>
+                            Tanbu Lane, East Legon<br>
+                            Shiashie, Accra, Ghana<br><br>
+                            <strong>Specializations:</strong><br>
+                            • AI & Machine Learning<br>
+                            • Software Engineering<br>
+                            • Web Development<br>
+                            • Digital Marketing
+                        </div>
+                    </div>
+                    
+                    <div class="branch-card">
+                        <img src="images/ipmc_northlegon.jpg" alt="North Legon Campus" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;">
+                        <h4><i class="fas fa-map-marker-alt" style="color: var(--primary-color); margin-right: 8px;"></i>North Legon Campus</h4>
+                        <p>University Area - Accra</p>
+                        <div class="location-details">
+                            <strong>Full Address:</strong><br>
+                            Koffi Annan Avenue<br>
+                            North Legon<br>
+                            Accra, Ghana<br><br>
+                            <strong>Programs:</strong><br>
+                            • University Degree Programs<br>
+                            • Professional Certifications<br>
+                            • Executive Training<br>
+                            • Research & Development
+                        </div>
+                    </div>
+                    
+                    <div class="branch-card">
+                        <img src="images/ipmc_kumasi.jpg" alt="Kumasi Campus" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;">
+                        <h4><i class="fas fa-map-marker-alt" style="color: var(--primary-color); margin-right: 8px;"></i>Kumasi Campus</h4>
+                        <p>Ashanti Region</p>
+                        <div class="location-details">
+                            <strong>Full Address:</strong><br>
+                            Nhyiaeso, Opposite Golf<br>
+                            Osei Tuffour Bypass<br>
+                            Kumasi, Ghana<br><br>
+                            <strong>Regional Hub:</strong><br>
+                            • Serving Ashanti Region<br>
+                            • Full Program Portfolio<br>
+                            • Career Services<br>
+                            • Industry Partnerships
+                        </div>
+                    </div>
+                    
+                    <div class="branch-card">
+                        <img src="images/ipmc_tema25.jpeg" alt="Tema-25 Campus" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;">
+                        <h4><i class="fas fa-map-marker-alt" style="color: var(--primary-color); margin-right: 8px;"></i>Tema-25 Campus</h4>
+                        <p>Industrial Hub</p>
+                        <div class="location-details">
+                            <strong>Full Address:</strong><br>
+                            C-25 Mall Junction<br>
+                            Vtraco Courts Road<br>
+                            Tema Community-25, Ghana<br><br>
+                            <strong>Focus Areas:</strong><br>
+                            • Industrial IT Solutions<br>
+                            • Systems Engineering<br>
+                            • Database Technologies<br>
+                            • Corporate Training
+                        </div>
+                    </div>
+                    
+                    <div class="branch-card">
+                        <img src="images/ipmc_takoradi.jpg" alt="Takoradi Campus" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;">
+                        <h4><i class="fas fa-map-marker-alt" style="color: var(--primary-color); margin-right: 8px;"></i>Takoradi Campus</h4>
+                        <p>Western Region</p>
+                        <div class="location-details">
+                            <strong>Full Address:</strong><br>
+                            Opposite Star of Sea Catholic Church<br>
+                            Library Building<br>
+                            53 Paa Grant Boulevard<br>
+                            Takoradi, Ghana<br><br>
+                            <strong>Services:</strong><br>
+                            • Oil & Gas IT Training<br>
+                            • Maritime Technology<br>
+                            • General IT Programs<br>
+                            • Professional Development
+                        </div>
+                    </div>
+                    
+                    <div class="branch-card">
+                        <img src="images/ipmc_dansoman.jpg" alt="Dansoman Campus" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;">
+                        <h4><i class="fas fa-map-marker-alt" style="color: var(--primary-color); margin-right: 8px;"></i>Dansoman Campus</h4>
+                        <p>Community Center</p>
+                        <div class="location-details">
+                            <strong>Full Address:</strong><br>
+                            Exhibition Street<br>
+                            Near Dansoman Market<br>
+                            Dansoman, Accra, Ghana<br><br>
+                            <strong>Community Focus:</strong><br>
+                            • Basic Computer Skills<br>
+                            • Digital Literacy<br>
+                            • Small Business IT<br>
+                            • Youth Programs
+                        </div>
+                    </div>
+                    
+                    <div class="branch-card">
+                        <img src="images/ipmc_6.jpg" alt="Tema-6 Campus" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;">
+                        <h4><i class="fas fa-map-marker-alt" style="color: var(--primary-color); margin-right: 8px;"></i>Tema-6 Campus</h4>
+                        <p>Port City Branch</p>
+                        <div class="location-details">
+                            <strong>Full Address:</strong><br>
+                            Obetsebi Lamptey Street<br>
+                            Tema Community-6<br>
+                            Ghana<br><br>
+                            <strong>Specialties:</strong><br>
+                            • Logistics IT Systems<br>
+                            • Port Management Tech<br>
+                            • Supply Chain Software<br>
+                            • Trade Technology
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div style="background: var(--light-color); padding: 60px 20px; border-radius: 15px; margin: 60px 0;">
+                <h3 style="text-align: center; margin-bottom: 40px;">Frequently Asked Questions</h3>
+                
+                <div class="course-grid">
+                    <div class="course-card">
+                        <h4>How do I apply for a program?</h4>
+                        <p>You can apply online through our website, visit any of our campuses, or contact us directly. Our admissions team will guide you through the application process and help you choose the right program.</p>
+                    </div>
+                    
+                    <div class="course-card">
+                        <h4>What are the admission requirements?</h4>
+                        <p>Requirements vary by program. Generally, you need a high school certificate or equivalent. Some advanced programs may require additional qualifications. Contact us for specific requirements.</p>
+                    </div>
+                    
+                    <div class="course-card">
+                        <h4>Do you offer financial assistance?</h4>
+                        <p>Yes, we offer various payment plans and scholarship opportunities. Our financial aid team can discuss options that work for your budget and circumstances.</p>
+                    </div>
+                    
+                    <div class="course-card">
+                        <h4>Can I visit the campus before enrolling?</h4>
+                        <p>Absolutely! We encourage campus visits. You can schedule a tour to see our facilities, meet faculty, and get a feel for the learning environment. Contact us to arrange your visit.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); padding: 60px 20px; border-radius: 15px; color: white; text-align: center;">
+                <h3 style="color: white; margin-bottom: 20px;">Ready to Start Your Journey?</h3>
+                <p style="margin-bottom: 30px; font-size: 1.1rem;">Don't wait - your future in technology starts today. Contact us now to learn more about our programs and take the first step towards your dream career.</p>
+                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                    <a href="explore.html" class="btn-secondary" style="background: white; color: var(--primary-color);">View Programs</a>
+                    <a href="#contact-form" class="btn-secondary" style="background: transparent; border: 2px solid white; color: white;">Send Message</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>IPMC</h3>
+                    <p>Leading technology education in Ghana since 1992. Empowering the next generation of IT professionals.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="explore.html">Programs</a></li>
+                        <li><a href="career.html">Career Support</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Programs</h4>
+                    <ul>
+                        <li><a href="explore.html#career-dome">Career Dome</a></li>
+                        <li><a href="explore.html#university">University Programs</a></li>
+                        <li><a href="explore.html#certification">Certifications</a></li>
+                        <li><a href="explore.html#short-courses">Short Courses</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-phone"></i> +233 XXX XXX XXX</p>
+                        <p><i class="fas fa-envelope"></i> info@ipmc.edu.gh</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Kwame Nkrumah Avenue, Accra</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 IPMC. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="frontend-config.js"></script>
+
+    <!-- Add this script before the closing </body> tag -->
+<script>
+// Function to load courses dynamically into the program dropdown
+async function loadCoursesToDropdown() {
+    const programSelect = document.getElementById('program');
+    if (!programSelect) return;
+    
+    try {
+        // Show loading state
+        programSelect.innerHTML = '<option value="">Loading courses...</option>';
+        
+        const response = await fetch(window.IPMC_CONFIG.apiUrl('get_contact_courses.php'), {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.success && data.data.courses) {
+            // Clear existing options
+            programSelect.innerHTML = '';
+            
+            // Add default option
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Select a program';
+            programSelect.appendChild(defaultOption);
+            
+            // Group courses by category
+            const groupedCourses = {};
+            data.data.courses.forEach(course => {
+                if (!groupedCourses[course.category]) {
+                    groupedCourses[course.category] = [];
+                }
+                groupedCourses[course.category].push(course);
+            });
+            
+            // Add optgroups for each category
+            const categoryNames = {
+                'career-dome': 'Career Dome Programs',
+                'university': 'University Programmes',
+                'certification': 'Certification Programs',
+                'short-courses': 'Short Courses'
+            };
+            
+            for (const [category, courses] of Object.entries(groupedCourses)) {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = categoryNames[category] || category;
+                
+                courses.forEach(course => {
+                    const option = document.createElement('option');
+                    option.value = course.course_code;
+                    option.textContent = `${course.course_code} - ${course.course_name}`;
+                    optgroup.appendChild(option);
+                });
+                
+                programSelect.appendChild(optgroup);
+            }
+            
+            // Add Other option
+            const otherOption = document.createElement('option');
+            otherOption.value = 'other';
+            otherOption.textContent = 'Other (Please specify in message)';
+            programSelect.appendChild(otherOption);
+            
+        } else {
+            // Fallback to static options
+            programSelect.innerHTML = `
+                <option value="">Select a program</option>
+                <option value="career-dome">Career Dome Programs</option>
+                <option value="university">University Programmes</option>
+                <option value="certification">Certification Programs</option>
+                <option value="short-courses">Short Courses</option>
+                <option value="other">Other</option>
+            `;
+        }
+    } catch (error) {
+        console.error('Error loading courses:', error);
+        // Fallback to static options
+        programSelect.innerHTML = `
+            <option value="">Select a program</option>
+            <option value="career-dome">Career Dome Programs</option>
+            <option value="university">University Programmes</option>
+            <option value="certification">Certification Programs</option>
+            <option value="short-courses">Short Courses</option>
+            <option value="other">Other</option>
+        `;
+    }
+}
+
+// Contact Form Submission Handler
+document.getElementById('contactForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Get the checkbox element
+    const agreeCheckbox = this.querySelector('input[type="checkbox"]');
+    if (!agreeCheckbox.checked) {
+        alert('Please agree to receive communications from IPMC');
+        return;
+    }
+    
+    const formData = {
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        program: document.getElementById('program').value,
+        campus: document.getElementById('campus').value,
+        message: document.getElementById('message').value
+    };
+    
+    // Show loading state
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
+    
+    try {
+        const response = await fetch(window.IPMC_CONFIG.apiUrl('contact_form_api.php'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(formData)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('Message sent successfully! We will contact you soon.');
+            document.getElementById('contactForm').reset();
+            // Reload courses in case admin added new ones
+            loadCoursesToDropdown();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error sending message. Please try again.');
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
+});
+
+// Load courses when page loads
+document.addEventListener('DOMContentLoaded', loadCoursesToDropdown);
+</script>
+</body>
+</html>

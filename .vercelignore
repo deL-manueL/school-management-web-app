@@ -1,0 +1,15 @@
+admin-dashboard/
+database.sql
+.env
+.env.*
+railway.json
+test_results.html
+debug_all.php
+fix_admin.php
+setup_admin.php
+check_admin.php
+check_results.php
+hash.php
+hash_password.php
+generate_hash.php
+*.log
