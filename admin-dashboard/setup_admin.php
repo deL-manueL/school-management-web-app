@@ -39,9 +39,10 @@ if ($stmt->execute()) {
     echo "<p>You can now login at: <a href='index.php'>Admin Login Page</a></p>";
     echo "</div>";
 } else {
+    error_log('Setup admin DB error: ' . $conn->error);
     echo "<div style='background: #ffebee; color: #c62828; padding: 20px; border-radius: 10px; margin: 20px;'>";
     echo "<h2>❌ Error:</h2>";
-    echo "<p>" . $conn->error . "</p>";
+    echo "<p>Database error occurred. Check server logs.</p>";
     echo "</div>";
 }
 

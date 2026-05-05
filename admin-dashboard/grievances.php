@@ -27,7 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply_grievance'])) {
         if ($stmt->execute()) {
             $message = "Response sent to student successfully!";
         } else {
-            $error = "Error sending response: " . $conn->error;
+            error_log('Grievance reply DB error: ' . $conn->error);
+            $error = "Database error. Please try again.";
         }
         $stmt->close();
     }

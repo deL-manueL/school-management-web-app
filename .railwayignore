@@ -6,6 +6,7 @@ admin-dashboard/fix_admin.php
 admin-dashboard/setup_admin.php
 admin-dashboard/check_admin.php
 admin-dashboard/check_results.php
+admin-dashboard/test_connection.php
 admin-dashboard/hash.php
 admin-dashboard/hash_password.php
 admin-dashboard/generate_hash.php

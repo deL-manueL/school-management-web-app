@@ -30,11 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->execute()) {
             $message = "Course added successfully!";
         } else {
-            $error = "Error adding course: " . $conn->error;
+            error_log('Add course DB error: ' . $conn->error);
+            $error = "Database error. Please try again.";
         }
         $stmt->close();
     }
-    
+
     // Handle Update Course
     if (isset($_POST['update_course'])) {
         $id = intval($_POST['course_id']);
@@ -47,14 +48,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $status = sanitizeInput($_POST['status']);
         $display_order = intval($_POST['display_order']);
         $show_in_contact = isset($_POST['show_in_contact']) ? 1 : 0;
-        
+
         $stmt = $conn->prepare("UPDATE courses SET course_code=?, course_name=?, category=?, description=?, duration=?, fee=?, status=?, display_order=?, show_in_contact_dropdown=? WHERE id=?");
         $stmt->bind_param("sssssdsiii", $course_code, $course_name, $category, $description, $duration, $fee, $status, $display_order, $show_in_contact, $id);
-        
+
         if ($stmt->execute()) {
             $message = "Course updated successfully!";
         } else {
-            $error = "Error updating course: " . $conn->error;
+            error_log('Update course DB error: ' . $conn->error);
+            $error = "Database error. Please try again.";
         }
         $stmt->close();
     }
@@ -477,10 +479,10 @@ if (isset($_GET['edit'])) {
             </div>
 
             <?php if($message): ?>
-                <div class="alert alert-success"><?php echo $message; ?></div>
+                <div class="alert alert-success"><?php echo htmlspecialchars($message); ?></div>
             <?php endif; ?>
             <?php if($error): ?>
-                <div class="alert alert-error"><?php echo $error; ?></div>
+                <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
             <?php endif; ?>
 
             <!-- Add/Edit Course Form -->
@@ -494,11 +496,11 @@ if (isset($_GET['edit'])) {
                     <div class="form-row">
                         <div class="form-group">
                             <label>Course Code *</label>
-                            <input type="text" name="course_code" required value="<?php echo $edit_course['course_code'] ?? ''; ?>">
+                            <input type="text" name="course_code" required value="<?php echo htmlspecialchars($edit_course['course_code'] ?? ''); ?>">
                         </div>
                         <div class="form-group">
                             <label>Course Name *</label>
-                            <input type="text" name="course_name" required value="<?php echo $edit_course['course_name'] ?? ''; ?>">
+                            <input type="text" name="course_name" required value="<?php echo htmlspecialchars($edit_course['course_name'] ?? ''); ?>">
                         </div>
                     </div>
                     
@@ -515,18 +517,18 @@ if (isset($_GET['edit'])) {
                         </div>
                         <div class="form-group">
                             <label>Duration</label>
-                            <input type="text" name="duration" placeholder="e.g., 6 months, 4 years" value="<?php echo $edit_course['duration'] ?? ''; ?>">
+                            <input type="text" name="duration" placeholder="e.g., 6 months, 4 years" value="<?php echo htmlspecialchars($edit_course['duration'] ?? ''); ?>">
                         </div>
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label>Fee (GHS)</label>
-                            <input type="number" name="fee" step="0.01" value="<?php echo $edit_course['fee'] ?? ''; ?>">
+                            <input type="number" name="fee" step="0.01" value="<?php echo htmlspecialchars($edit_course['fee'] ?? ''); ?>">
                         </div>
                         <div class="form-group">
                             <label>Display Order</label>
-                            <input type="number" name="display_order" value="<?php echo $edit_course['display_order'] ?? 0; ?>">
+                            <input type="number" name="display_order" value="<?php echo intval($edit_course['display_order'] ?? 0); ?>">
                         </div>
                     </div>
                     
@@ -549,7 +551,7 @@ if (isset($_GET['edit'])) {
                     
                     <div class="form-group">
                         <label>Description</label>
-                        <textarea name="description" rows="4" placeholder="Course description"><?php echo $edit_course['description'] ?? ''; ?></textarea>
+                        <textarea name="description" rows="4" placeholder="Course description"><?php echo htmlspecialchars($edit_course['description'] ?? ''); ?></textarea>
                     </div>
                     
                     <button type="submit" name="<?php echo $edit_course ? 'update_course' : 'add_course'; ?>" class="btn-primary">

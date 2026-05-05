@@ -26,7 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_result'])) {
     if ($stmt->execute()) {
         $message = "Result uploaded successfully!";
     } else {
-        $error = "Error uploading result: " . $conn->error;
+        error_log('Upload result DB error: ' . $conn->error);
+        $error = "Database error. Please try again.";
     }
     $stmt->close();
 }
@@ -97,10 +98,10 @@ $conn->close();
             </div>
 
             <?php if($message): ?>
-                <div class="alert alert-success"><?php echo $message; ?></div>
+                <div class="alert alert-success"><?php echo htmlspecialchars($message); ?></div>
             <?php endif; ?>
             <?php if($error): ?>
-                <div class="alert alert-error"><?php echo $error; ?></div>
+                <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
             <?php endif; ?>
 
             <div class="form-container">
@@ -112,8 +113,8 @@ $conn->close();
                             <select name="student_id" required>
                                 <option value="">Select Student</option>
                                 <?php while($student = $students->fetch_assoc()): ?>
-                                    <option value="<?php echo $student['student_id']; ?>">
-                                        <?php echo $student['student_id'] . ' - ' . $student['first_name'] . ' ' . $student['last_name']; ?>
+                                    <option value="<?php echo htmlspecialchars($student['student_id']); ?>">
+                                        <?php echo htmlspecialchars($student['student_id'] . ' - ' . $student['first_name'] . ' ' . $student['last_name']); ?>
                                     </option>
                                 <?php endwhile; ?>
                             </select>

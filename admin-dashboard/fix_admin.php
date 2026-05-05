@@ -46,9 +46,10 @@ if ($stmt->execute()) {
         <p>You can now login at: <a href="index.php" style="color: #2e7d32;">Admin Login Page</a></p>
     </div>';
 } else {
+    error_log('Admin setup DB error: ' . $conn->error);
     $message = '<div style="background: #ffebee; color: #c62828; padding: 20px; border-radius: 10px;">
         <h2>❌ Error Creating Admin</h2>
-        <p>' . $conn->error . '</p>
+        <p>Database error occurred. Check server logs.</p>
     </div>';
 }
 

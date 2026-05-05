@@ -131,7 +131,7 @@ $conn->close();
 
     <script>
         function viewStudent(studentId) {
-            fetch(`api/get_student_data.php?student_id=${studentId}`)
+            fetch(`api/get_student_data_admin.php?student_id=${encodeURIComponent(studentId)}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
