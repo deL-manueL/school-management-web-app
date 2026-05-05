@@ -61,9 +61,9 @@ The PHP built-in server (`php -S`) serves both the admin dashboard HTML pages an
 
 | Layer | Technology |
 |---|---|
-| Backend language | PHP 7.4+ (uses `password_hash`, `PASSWORD_DEFAULT`, `mysqli`, `json_encode`) |
+| Backend language | PHP 8.2+ (uses `password_hash`, `PASSWORD_DEFAULT`, `mysqli`, `json_encode`) |
 | Backend server | PHP built-in server (`php -S`) on Railway; Apache via XAMPP locally |
-| Database | MySQL 5.7+ / MariaDB 10.3+ |
+| Database | MySQL 5.7+ |
 | Database extension | `mysqli` (procedural prepared statements via OOP interface) |
 | Session storage | PHP file-based sessions in `storage/sessions/` |
 | Frontend | Plain HTML5, CSS3, Vanilla JavaScript (no framework, no bundler) |
