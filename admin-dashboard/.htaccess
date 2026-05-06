@@ -1,15 +1,14 @@
 # Prevent directory listing
 Options -Indexes
 
-# Protect config files
+# Protect config.php from direct HTTP access (Apache 2.4 syntax)
 <Files "config.php">
-    Order Allow,Deny
-    Deny from all
+    Require all denied
 </Files>
 
-# Enable rewrite engine
+# Enable rewrite engine (mod_rewrite must be enabled)
 RewriteEngine On
 
-# Force HTTPS (uncomment if using SSL)
+# Force HTTPS — uncomment on production if not handled by a load balancer
 # RewriteCond %{HTTPS} off
 # RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]

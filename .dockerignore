@@ -1,14 +1,45 @@
+# Secrets — never in the image
 .env
 .env.*
+
+# Version control
+.git
+.gitignore
+
+# Editor / tooling state
+.claude
+.bolt
+.vscode
+*.log
+
+# Frontend build tool configs — not needed at runtime
+tailwind.config.js
+postcss.config.js
+tsconfig.app.json
+node_modules
+
+# Session files — created at runtime, must not be baked in
+storage/sessions
+admin-dashboard/storage
+
+# Debug and setup scripts — excluded from production image
 test_results.html
 admin-dashboard/debug_all.php
 admin-dashboard/fix_admin.php
 admin-dashboard/setup_admin.php
 admin-dashboard/check_admin.php
 admin-dashboard/check_results.php
+admin-dashboard/test_connection.php
 admin-dashboard/hash.php
 admin-dashboard/hash_password.php
 admin-dashboard/generate_hash.php
-images/Readdy_files/
+
+# Unused static assets
+images/Readdy_files
 images/Readdy.html
-*.log
+
+# Deployment config files — not needed inside the container
+railway.json
+.railwayignore
+.vercelignore
+.dockerignore

@@ -1,0 +1,6 @@
+# Force LF line endings for files that run inside Linux containers.
+# Without this, git on Windows converts them to CRLF, which breaks
+# the shebang line and causes "exec format error" at container startup.
+docker-entrypoint.sh text eol=lf
+*.sh                 text eol=lf
+Dockerfile           text eol=lf
