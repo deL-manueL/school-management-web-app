@@ -1,7 +1,11 @@
 FROM php:8.2-apache
-RUN a2dismod mpm_event mpm_worker 2>/dev/null || true \
+RUN rm -f /etc/apache2/mods-enabled/mpm_event.load \
+           /etc/apache2/mods-enabled/mpm_event.conf \
+           /etc/apache2/mods-enabled/mpm_worker.load \
+           /etc/apache2/mods-enabled/mpm_worker.conf \
     && a2enmod mpm_prefork \
-    && apachectl configtest 2>&1 | grep -q "Syntax OK"
+    && echo "LoadModule mpm_prefork_module /usr/lib/apache2/modules/mod_mpm_prefork.so" \
+       > /etc/apache2/mods-enabled/mpm_prefork.load
 
 # Extensions — mysqli for the app, pdo_mysql as a reliable fallback driver
 RUN docker-php-ext-install mysqli pdo pdo_mysql
@@ -36,5 +40,5 @@ RUN mkdir -p /var/www/html/storage/sessions \
 
 EXPOSE 80
 
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["apache2-foreground"]
