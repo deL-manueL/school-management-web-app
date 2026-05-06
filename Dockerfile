@@ -3,6 +3,17 @@ FROM php:8.2-apache
 # ── PHP extensions ──────────────────────────────────────────────────────────
 RUN docker-php-ext-install mysqli
 
+# ── MPM: enforce prefork ─────────────────────────────────────────────────────
+# mod_php (the mechanism php:8.2-apache uses to run PHP) is NOT thread-safe.
+# It must run under mpm_prefork. Debian's Apache 2.4 ships with mpm_event
+# enabled by default; if both mpm_event and mpm_prefork are present Apache
+# refuses to start: "More than one MPM loaded."
+# Disable the threading MPMs first, then enable prefork explicitly.
+# The `|| true` guards against a non-zero exit if a module was already disabled.
+RUN a2dismod mpm_event  || true \
+    && a2dismod mpm_worker || true \
+    && a2enmod  mpm_prefork
+
 # ── Apache modules ───────────────────────────────────────────────────────────
 # mod_rewrite  — required for admin-dashboard/.htaccess RewriteEngine directives
 # mod_headers  — enables CORS and cache-control headers from PHP
