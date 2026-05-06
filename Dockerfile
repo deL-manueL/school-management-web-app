@@ -1,11 +1,4 @@
 FROM php:8.2-apache
-RUN rm -f /etc/apache2/mods-enabled/mpm_event.load \
-           /etc/apache2/mods-enabled/mpm_event.conf \
-           /etc/apache2/mods-enabled/mpm_worker.load \
-           /etc/apache2/mods-enabled/mpm_worker.conf \
-    && a2enmod mpm_prefork \
-    && echo "LoadModule mpm_prefork_module /usr/lib/apache2/modules/mod_mpm_prefork.so" \
-       > /etc/apache2/mods-enabled/mpm_prefork.load
 
 # Extensions — mysqli for the app, pdo_mysql as a reliable fallback driver
 RUN docker-php-ext-install mysqli pdo pdo_mysql
@@ -36,7 +29,12 @@ RUN rm -f /var/www/html/docker-entrypoint.sh
 # Session directory must exist and be writable by the Apache process user.
 RUN mkdir -p /var/www/html/storage/sessions \
     && chown -R www-data:www-data /var/www/html/storage \
-    && chmod -R 775 /var/www/html/storage
+    && chmod -R 775 /var/www/html/storage \
+    && rm -f /etc/apache2/mods-enabled/mpm_event.load \
+             /etc/apache2/mods-enabled/mpm_event.conf \
+             /etc/apache2/mods-enabled/mpm_worker.load \
+             /etc/apache2/mods-enabled/mpm_worker.conf \
+    && a2enmod mpm_prefork
 
 EXPOSE 80
 
