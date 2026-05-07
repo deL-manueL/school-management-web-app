@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="api-base-url" content="https://school-management-web-app-production-d0fe.up.railway.app/admin-dashboard/api/">
     <meta charset="UTF-8">
+    <meta name="api-base-url" content="https://school-management-web-app-production-d0fe.up.railway.app/admin-dashboard/api/">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Portal - IPMC</title>
     <link rel="stylesheet" href="styles.css">
@@ -837,23 +837,23 @@
             .then(data => {
                 console.log('Student data:', data);
                 
-                if (data.success && data.student) {
+                if (data.success && data.data && data.data.student) {
                     // Show dashboard
                     document.getElementById('loginSection').style.display = 'none';
                     document.getElementById('registerSection').style.display = 'none';
                     document.getElementById('dashboardSection').style.display = 'block';
-                    
+
                     // Update header
-                    document.getElementById('studentName').textContent = data.student.first_name + ' ' + data.student.last_name;
-                    document.getElementById('displayStudentId').textContent = data.student.student_id;
-                    
+                    document.getElementById('studentName').textContent = data.data.student.first_name + ' ' + data.data.student.last_name;
+                    document.getElementById('displayStudentId').textContent = data.data.student.student_id;
+
                     // Update profile tab
-                    document.getElementById('profileFullName').textContent = data.student.first_name + ' ' + data.student.last_name;
-                    document.getElementById('profileStudentIdDisplay').textContent = data.student.student_id;
-                    document.getElementById('profileEmail').textContent = data.student.email || 'Not provided';
-                    document.getElementById('profilePhone').textContent = data.student.phone || 'Not provided';
-                    document.getElementById('profileProgram').textContent = data.student.program || 'Not selected';
-                    document.getElementById('profileRegistered').textContent = data.student.created_at ? new Date(data.student.created_at).toLocaleDateString() : 'Recent';
+                    document.getElementById('profileFullName').textContent = data.data.student.first_name + ' ' + data.data.student.last_name;
+                    document.getElementById('profileStudentIdDisplay').textContent = data.data.student.student_id;
+                    document.getElementById('profileEmail').textContent = data.data.student.email || 'Not provided';
+                    document.getElementById('profilePhone').textContent = data.data.student.phone || 'Not provided';
+                    document.getElementById('profileProgram').textContent = data.data.student.program || 'Not selected';
+                    document.getElementById('profileRegistered').textContent = data.data.student.created_at ? new Date(data.data.student.created_at).toLocaleDateString() : 'Recent';
                     
                     // Load results
                     loadResults(studentId);
@@ -883,13 +883,13 @@
             .then(data => {
                 console.log('Results data:', data);
                 
-                if (data.success && data.results && data.results.length > 0) {
+                if (data.success && data.data && data.data.results && data.data.results.length > 0) {
                     let totalPoints = 0;
                     let totalCredits = 0;
                     const gradePoints = {'A': 4.0, 'A-': 3.7, 'B+': 3.3, 'B': 3.0, 'B-': 2.7, 'C+': 2.3, 'C': 2.0, 'D': 1.0, 'F': 0.0};
-                    
+
                     tbody.innerHTML = '';
-                    data.results.forEach(result => {
+                    data.data.results.forEach(result => {
                         const gradeClass = 'grade-' + (result.grade ? result.grade.charAt(0).toLowerCase() : 'f');
                         const row = tbody.insertRow();
                         row.innerHTML = `
@@ -911,7 +911,7 @@
                     const gpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : 0;
                     document.getElementById('gpaValue').textContent = gpa;
                     document.getElementById('overallGPA').textContent = gpa;
-                    document.getElementById('coursesCount').textContent = data.results.length;
+                    document.getElementById('coursesCount').textContent = data.data.results.length;
                     document.getElementById('creditsEarned').textContent = totalCredits;
                 } else {
                     tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No results available yet. Check back after results are uploaded.</td></tr>';
@@ -939,10 +939,10 @@ function loadGrievances(studentId) {
         .then(data => {
             console.log('Grievances data:', data);
             
-            if (data.success && data.grievances && data.grievances.length > 0) {
-                document.getElementById('grievancesCount').textContent = data.grievances.length;
+            if (data.success && data.data && data.data.grievances && data.data.grievances.length > 0) {
+                document.getElementById('grievancesCount').textContent = data.data.grievances.length;
                 container.innerHTML = '';
-                data.grievances.forEach(g => {
+                data.data.grievances.forEach(g => {
                     // Get professional status label
                     const statusLabel = getProfessionalStatus(g.status);
                     const statusClass = getStatusClass(g.status);
