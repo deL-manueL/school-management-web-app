@@ -202,14 +202,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
                 <?php endif; ?>
                 
-                <form method="POST" action="">
+                <form id="adminLoginForm" method="POST" action="">
                     <div class="form-group">
                         <label>Username or Email</label>
-                        <input type="text" name="username" placeholder="Enter username or email" required autocomplete="off">
+                        <input type="text" id="adminUsername" name="username" placeholder="Enter username or email" required autocomplete="off">
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <input type="password" name="password" placeholder="Enter password" required>
+                        <input type="password" id="adminPassword" name="password" placeholder="Enter password" required>
                     </div>
                     <button type="submit" class="btn-login">Login to Dashboard</button>
                 </form>
@@ -220,5 +220,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
     </div>
+    <script src="../validation.js"></script>
+    <script>
+        (function () {
+            const form = document.getElementById('adminLoginForm');
+            if (!form || !window.IPMCValidation) return;
+            const r = window.IPMCValidation.rules;
+            window.IPMCValidation.attach(form, {
+                '#adminUsername': [r.required],
+                '#adminPassword': [r.required],
+            });
+        })();
+    </script>
 </body>
 </html>

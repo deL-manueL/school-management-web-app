@@ -488,26 +488,26 @@ if (isset($_GET['edit'])) {
             <!-- Add/Edit Course Form -->
             <div class="form-container">
                 <h3><?php echo $edit_course ? 'Edit Course' : 'Add New Course'; ?></h3>
-                <form method="POST">
+                <form id="courseForm" method="POST">
                     <?php if($edit_course): ?>
                         <input type="hidden" name="course_id" value="<?php echo $edit_course['id']; ?>">
                     <?php endif; ?>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label>Course Code *</label>
-                            <input type="text" name="course_code" required value="<?php echo htmlspecialchars($edit_course['course_code'] ?? ''); ?>">
+                            <input type="text" id="courseCode" name="course_code" required value="<?php echo htmlspecialchars($edit_course['course_code'] ?? ''); ?>">
                         </div>
                         <div class="form-group">
                             <label>Course Name *</label>
-                            <input type="text" name="course_name" required value="<?php echo htmlspecialchars($edit_course['course_name'] ?? ''); ?>">
+                            <input type="text" id="courseName" name="course_name" required value="<?php echo htmlspecialchars($edit_course['course_name'] ?? ''); ?>">
                         </div>
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label>Category *</label>
-                            <select name="category" required>
+                            <select id="courseCategory" name="category" required>
                                 <option value="">Select Category</option>
                                 <option value="career-dome" <?php echo (isset($edit_course) && $edit_course['category'] == 'career-dome') ? 'selected' : ''; ?>>Career Dome Programs</option>
                                 <option value="university" <?php echo (isset($edit_course) && $edit_course['category'] == 'university') ? 'selected' : ''; ?>>University Programmes</option>
@@ -524,11 +524,11 @@ if (isset($_GET['edit'])) {
                     <div class="form-row">
                         <div class="form-group">
                             <label>Fee (GHS)</label>
-                            <input type="number" name="fee" step="0.01" value="<?php echo htmlspecialchars($edit_course['fee'] ?? ''); ?>">
+                            <input type="number" id="courseFee" name="fee" step="0.01" value="<?php echo htmlspecialchars($edit_course['fee'] ?? ''); ?>">
                         </div>
                         <div class="form-group">
                             <label>Display Order</label>
-                            <input type="number" name="display_order" value="<?php echo intval($edit_course['display_order'] ?? 0); ?>">
+                            <input type="number" id="courseDisplayOrder" name="display_order" value="<?php echo intval($edit_course['display_order'] ?? 0); ?>">
                         </div>
                     </div>
                     
@@ -654,5 +654,20 @@ if (isset($_GET['edit'])) {
             </div>
         </main>
     </div>
+    <script src="../validation.js"></script>
+    <script>
+        (function () {
+            const form = document.getElementById('courseForm');
+            if (!form || !window.IPMCValidation) return;
+            const r = window.IPMCValidation.rules;
+            window.IPMCValidation.attach(form, {
+                '#courseCode':         [r.required],
+                '#courseName':         [r.required],
+                '#courseCategory':     [r.required],
+                '#courseFee':          [r.decimalInRange(0, 1000000)],
+                '#courseDisplayOrder': [r.integer],
+            });
+        })();
+    </script>
 </body>
 </html>

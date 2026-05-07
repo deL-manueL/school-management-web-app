@@ -131,24 +131,37 @@ $conn->close();
 
     <script>
         function viewStudent(studentId) {
-            fetch(`api/get_student_data_admin.php?student_id=${encodeURIComponent(studentId)}`)
+            const modal = document.getElementById('studentModal');
+            const details = document.getElementById('studentDetails');
+            details.innerHTML = 'Loading...';
+            modal.style.display = 'flex';
+
+            fetch(`api/get_student_data_admin.php?student_id=${encodeURIComponent(studentId)}`, { credentials: 'include' })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        document.getElementById('studentDetails').innerHTML = `
-                            <p><strong>Student ID:</strong> ${data.student.student_id}</p>
-                            <p><strong>Name:</strong> ${data.student.first_name} ${data.student.last_name}</p>
-                            <p><strong>Email:</strong> ${data.student.email}</p>
-                            <p><strong>Phone:</strong> ${data.student.phone}</p>
-                            <p><strong>Program:</strong> ${data.student.program}</p>
-                            <p><strong>Registered:</strong> ${new Date(data.student.created_at).toLocaleDateString()}</p>
+                    if (data.success && data.data && data.data.student) {
+                        const s = data.data.student;
+                        const results = data.data.results || [];
+                        const gpa = data.data.gpa;
+                        details.innerHTML = `
+                            <p><strong>Student ID:</strong> ${s.student_id}</p>
+                            <p><strong>Name:</strong> ${s.first_name} ${s.last_name}</p>
+                            <p><strong>Email:</strong> ${s.email}</p>
+                            <p><strong>Phone:</strong> ${s.phone}</p>
+                            <p><strong>Program:</strong> ${s.program}</p>
+                            <p><strong>Registered:</strong> ${new Date(s.created_at).toLocaleDateString()}</p>
                             <hr>
                             <h4>Academic Summary</h4>
-                            <p><strong>Courses Taken:</strong> ${data.results ? data.results.length : 0}</p>
-                            <p><strong>GPA:</strong> ${data.gpa || 'Not available'}</p>
+                            <p><strong>Courses Taken:</strong> ${results.length}</p>
+                            <p><strong>GPA:</strong> ${gpa !== undefined && gpa !== null ? gpa : 'Not available'}</p>
                         `;
-                        document.getElementById('studentModal').style.display = 'flex';
+                    } else {
+                        details.innerHTML = `<p style="color:#c33;">${data.message || 'Failed to load student details.'}</p>`;
                     }
+                })
+                .catch(err => {
+                    console.error('viewStudent error:', err);
+                    details.innerHTML = '<p style="color:#c33;">Error loading student details. Please try again.</p>';
                 });
         }
 

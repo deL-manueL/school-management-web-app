@@ -106,11 +106,11 @@ $conn->close();
 
             <div class="form-container">
                 <h3><i class="fas fa-plus-circle"></i> Upload Single Result</h3>
-                <form method="POST">
+                <form id="resultForm" method="POST">
                     <div class="form-row">
                         <div class="form-group">
                             <label>Select Student *</label>
-                            <select name="student_id" required>
+                            <select id="resultStudentId" name="student_id" required>
                                 <option value="">Select Student</option>
                                 <?php while($student = $students->fetch_assoc()): ?>
                                     <option value="<?php echo htmlspecialchars($student['student_id']); ?>">
@@ -121,17 +121,17 @@ $conn->close();
                         </div>
                         <div class="form-group">
                             <label>Course Code *</label>
-                            <input type="text" name="course_code" placeholder="e.g., CS101" required>
+                            <input type="text" id="resultCourseCode" name="course_code" placeholder="e.g., CS101" required>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>Course Name *</label>
-                            <input type="text" name="course_name" placeholder="e.g., Introduction to Programming" required>
+                            <input type="text" id="resultCourseName" name="course_name" placeholder="e.g., Introduction to Programming" required>
                         </div>
                         <div class="form-group">
                             <label>Semester *</label>
-                            <select name="semester" required>
+                            <select id="resultSemester" name="semester" required>
                                 <option value="Semester 1">Semester 1</option>
                                 <option value="Semester 2">Semester 2</option>
                                 <option value="Semester 3">Semester 3</option>
@@ -142,11 +142,11 @@ $conn->close();
                     <div class="form-row">
                         <div class="form-group">
                             <label>Academic Year *</label>
-                            <input type="text" name="academic_year" placeholder="e.g., 2024/2025" required>
+                            <input type="text" id="resultAcademicYear" name="academic_year" placeholder="e.g., 2024/2025" required>
                         </div>
                         <div class="form-group">
                             <label>Grade *</label>
-                            <select name="grade" required>
+                            <select id="resultGrade" name="grade" required>
                                 <option value="A">A (Excellent)</option>
                                 <option value="A-">A-</option>
                                 <option value="B+">B+</option>
@@ -162,11 +162,11 @@ $conn->close();
                     <div class="form-row">
                         <div class="form-group">
                             <label>Credits *</label>
-                            <input type="number" name="credits" min="1" max="6" required>
+                            <input type="number" id="resultCredits" name="credits" min="1" max="6" required>
                         </div>
                         <div class="form-group">
                             <label>Score (%)</label>
-                            <input type="number" name="score" step="0.01" min="0" max="100" placeholder="Optional">
+                            <input type="number" id="resultScore" name="score" step="0.01" min="0" max="100" placeholder="Optional">
                         </div>
                     </div>
                     <button type="submit" name="upload_result" class="btn-primary">Upload Result</button>
@@ -230,5 +230,23 @@ $conn->close();
             </div>
         </main>
     </div>
+    <script src="../validation.js"></script>
+    <script>
+        (function () {
+            const form = document.getElementById('resultForm');
+            if (!form || !window.IPMCValidation) return;
+            const r = window.IPMCValidation.rules;
+            window.IPMCValidation.attach(form, {
+                '#resultStudentId':    [r.required, r.studentId],
+                '#resultCourseCode':   [r.required],
+                '#resultCourseName':   [r.required],
+                '#resultSemester':     [r.required],
+                '#resultAcademicYear': [r.required, r.academicYear],
+                '#resultGrade':        [r.required],
+                '#resultCredits':      [r.required, r.integerInRange(1, 6)],
+                '#resultScore':        [r.decimalInRange(0, 100)],
+            });
+        })();
+    </script>
 </body>
 </html>

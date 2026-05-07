@@ -25,7 +25,7 @@
                     <li><a href="contact.html" class="nav-link active">Contact Us</a></li>
                     <li><a href="grievance.html" class="nav-link grievance-btn">Grievance Portal</a></li>
                 </ul>
-                <div class="hamburger">
+                <div class="hamburger" aria-label="Open navigation menu">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -112,7 +112,7 @@
                     
                     <div class="form-group">
                         <label>
-                            <input type="checkbox" required style="margin-right: 10px;">
+                            <input type="checkbox" id="contactConsent" required style="margin-right: 10px;">
                             I agree to receive communications from IPMC about programs and services.
                         </label>
                     </div>
@@ -346,11 +346,11 @@
                     <h3>IPMC</h3>
                     <p>Leading technology education in Ghana since 1992. Empowering the next generation of IT professionals.</p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-linkedin"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#" aria-label="Visit our Facebook page"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="Visit our Twitter page"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Visit our LinkedIn page"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" aria-label="Visit our Instagram page"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Visit our YouTube channel"><i class="fab fa-youtube"></i></a>
                     </div>
                 </div>
                 <div class="footer-section">
@@ -388,6 +388,22 @@
 
     <script src="script.js"></script>
     <script src="frontend-config.js"></script>
+    <script src="validation.js"></script>
+    <script>
+        (function () {
+            const form = document.getElementById('contactForm');
+            if (!form || !window.IPMCValidation) return;
+            const r = window.IPMCValidation.rules;
+            window.IPMCValidation.attach(form, {
+                '#firstName':       [r.required, r.name],
+                '#lastName':        [r.required, r.name],
+                '#email':           [r.required, r.email],
+                '#phone':           [r.required, r.phone],
+                '#message':         [r.required],
+                '#contactConsent':  [r.required],
+            });
+        })();
+    </script>
 
     <!-- Add this script before the closing </body> tag -->
 <script>

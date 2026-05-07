@@ -375,7 +375,7 @@ $conn->close();
                 <h3><i class="fas fa-reply-all"></i> Reply to Grievance</h3>
                 <button class="close">&times;</button>
             </div>
-            <form method="POST" action="">
+            <form id="grievanceReplyForm" method="POST" action="">
                 <div class="modal-body">
                     <input type="hidden" name="grievance_id" id="grievance_id">
                     <input type="hidden" name="reply_grievance" value="1">
@@ -531,6 +531,18 @@ $conn->close();
                 });
             }
         });
+    </script>
+    <script src="../validation.js"></script>
+    <script>
+        (function () {
+            const form = document.getElementById('grievanceReplyForm');
+            if (!form || !window.IPMCValidation) return;
+            const r = window.IPMCValidation.rules;
+            window.IPMCValidation.attach(form, {
+                '#grievanceStatus': [r.required],
+                '#adminResponse':   [r.required],
+            });
+        })();
     </script>
 </body>
 </html>
